@@ -13,6 +13,7 @@ public struct DatabaseClient {
   public var fetchUser: (User.ID) -> EitherIO<Error, User>
   public var insertUser: (InsertUserRequest) -> EitherIO<Error, User>
   public var migrate: () -> EitherIO<Error, Void>
+  public var shutdown: () -> EitherIO<Error, Void>
   public var updateUser: (User) -> EitherIO<Error, User>
   
   public init(
@@ -21,12 +22,14 @@ public struct DatabaseClient {
     fetchUser: @escaping (User.ID) -> EitherIO<Error, User>,
     insertUser: @escaping (InsertUserRequest) -> EitherIO<Error, User>,
     migrate: @escaping () -> EitherIO<Error, Void>,
+    shutdown: @escaping () -> EitherIO<Error, Void>,
     updateUser: @escaping (User) -> EitherIO<Error, User>
   ) {
     self.fetchUsers = fetchUsers
     self.fetchUser = fetchUser
     self.insertUser = insertUser
     self.migrate = migrate
+    self.shutdown = shutdown
     self.updateUser = updateUser
     self.deleteUser = deleteUser
   }

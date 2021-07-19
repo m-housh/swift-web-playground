@@ -11,6 +11,8 @@ let package = Package(
     .library(name: "DatabaseClient", targets: ["DatabaseClient"]),
     .library(name: "DatabaseClientLive", targets: ["DatabaseClientLive"]),
     .library(name: "Router", targets: ["Router"]),
+    .executable(name: "server", targets: ["server"]),
+    .library(name: "ServerBootstrap", targets: ["ServerBootstrap"]),
     .library(name: "SharedModels", targets: ["SharedModels"]),
     .library(name: "SiteMiddleware", targets: ["SiteMiddleware"]),
   ],
@@ -43,6 +45,7 @@ let package = Package(
     .target(
       name: "Router",
       dependencies: [
+        "SharedModels",
         .product(name: "ApplicativeRouter", package: "Web"),
         .product(name: "CasePaths", package: "swift-case-paths")
       ]),
@@ -51,8 +54,23 @@ let package = Package(
       dependencies: ["Router"]
     ),
     .target(
+      name: "server",
+      dependencies: [
+        "ServerBootstrap",
+        "SiteMiddleware"
+      ]),
+    .target(
+      name: "ServerBootstrap",
+      dependencies: [
+        "DatabaseClientLive",
+        "Router",
+        "SiteMiddleware",
+        .product(name: "Either", package: "Prelude")
+      ]),
+    .target(
       name: "SharedModels",
       dependencies: [
+
       ]),
     .target(
       name: "SiteMiddleware",
@@ -60,6 +78,7 @@ let package = Package(
         "DatabaseClient",
         "Router",
         .product(name: "ApplicativeRouter", package: "Web"),
+        .product(name: "ApplicativeRouterHttpPipelineSupport", package: "Web"),
         .product(name: "HttpPipeline", package: "Web"),
 //        .product(name: "Either", package: "Prelude"),
       ]),

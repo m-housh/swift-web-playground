@@ -2,7 +2,11 @@ import ApplicativeRouter
 import Foundation
 import SharedModels
 
-public typealias UserRoute = CRUDRoute<User, User>
+public struct InsertUser: Codable, Equatable {
+  public let name: String
+}
+
+public typealias UserRoute = CRUDRoute<User, InsertUser, User>
 public typealias UserRouter = Router<UserRoute>
 
 extension UserRouter {

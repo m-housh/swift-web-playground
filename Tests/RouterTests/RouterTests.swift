@@ -9,7 +9,7 @@ import Optics
 
 final class RouterTests: XCTestCase {
   
-  typealias Route = CRUDRoute<User, User>
+  typealias Route = CRUDRoute<User, InsertUser, User>
   let router: Router<Route> = crudRouter("users", id: .uuid)
   
   func test_CRUDRouter_fetch() {
@@ -33,7 +33,7 @@ final class RouterTests: XCTestCase {
   }
   
   func test_CRUDRouter_insert() {
-    let user = User(id: .init(), name: "blob")
+    let user = InsertUser(name: "blob")
     let route = Route.insert(user)
     let request = URLRequest(url: URL(string: "users")!)
       |> \.httpMethod .~ "post"

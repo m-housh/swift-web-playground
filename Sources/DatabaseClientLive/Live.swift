@@ -50,6 +50,17 @@ extension DatabaseClient {
           )
 
       },
+      shutdown: {
+        .init(
+          run: .init {
+          do {
+            try pool.syncShutdownGracefully()
+            return .right(())
+          } catch {
+            return .left(error)
+          }
+        })
+      },
       updateUser: { request -> EitherIO<Error, User> in
         pool.sqlDatabase.update("users")
           .where("id", .equal, request.id)
