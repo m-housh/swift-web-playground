@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     name: MacOS
-    runs-on: macOS-11
+    runs-on: macOS-latest
     steps:
     - uses: actions/checkout@v2
     - name: Install PostgreSQL
