@@ -120,24 +120,24 @@ public func crudRouter<Model, Insert, Update>(
 }
 
 /// Create a router with the supplied routes.
-@available(swift 5.4)
-public func crudRouter<M, I, U>(
-  _ path: String...,
-  id idIso: PartialIso<String, M.ID>? = nil,
-  encoder jsonEncoder: JSONEncoder = .init(),
-  decoder jsonDecoder: JSONDecoder = .init(),
-  using routes: CRUDRouteType...
-) -> Router<CRUDRoute<M, I, U>>
-  where M: Codable, M: Identifiable, U: Codable
-{
-  crudRouter(
-    path,
-    routes: routes,
-    id: idIso,
-    encoder: jsonEncoder,
-    decoder: jsonDecoder
-  )
-}
+//@available(swift 5.4)
+//public func crudRouter<M, I, U>(
+//  _ path: String...,
+//  id idIso: PartialIso<String, M.ID>? = nil,
+//  encoder jsonEncoder: JSONEncoder = .init(),
+//  decoder jsonDecoder: JSONDecoder = .init(),
+//  using routes: CRUDRouteType...
+//) -> Router<CRUDRoute<M, I, U>>
+//  where M: Codable, M: Identifiable, U: Codable
+//{
+//  crudRouter(
+//    path,
+//    routes: routes,
+//    id: idIso,
+//    encoder: jsonEncoder,
+//    decoder: jsonDecoder
+//  )
+//}
 
 private func sanitizePath(_ path: String) -> String {
   if path.starts(with: "/") {
