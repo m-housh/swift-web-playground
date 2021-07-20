@@ -7,7 +7,7 @@ test-linux:
 		-v "$(PWD):$(PWD)" \
 		-w "$(PWD)" \
 		swift:5.4 \
-		bash -c Bootstrap/test.sh
+		bash Bootstrap/test.sh
 
 test-linux-arm:
 	@docker run \
