@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  db:
+    environment:
+      POSTGRES_DB: playground_development
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: playground
+    image: postgres
+    ports:
+      - '5432:5432'
+    restart: unless-stopped
+  
+  web:
+    build:
+      context: .
+      dockerfile: Bootstrap/Dockerfile
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://playground:@5432/payground_development
+    ports:
+      - '8080:8080'

@@ -1,0 +1,27 @@
+FROM swift:5.3 as build
+
+RUN apt-get --fix-missing update
+RUN apt-get install -y cmake libpq-dev libssl-dev libz-dev openssl
+
+WORKDIR /build
+
+COPY Package.swift .
+COPY Sources ./Sources
+COPY Tests ./Tests
+
+RUN swift build \
+  --configuration release \
+  --enable-test-discovery \
+  --product server \
+  -Xswiftc -g
+  
+FROM swift:5.3-slim
+
+RUN apt-get --fix-missing
+RUN apt-get install -y cmake libpq-dev libssl-dev libz-dev openssl
+
+WORKDIR /run
+
+COPY --from=build /build/.build/release /run
+
+CMD ./server

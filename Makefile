@@ -1,15 +1,7 @@
 test-swift:
 	@swift test
-	
-test-linux:
-	@docker run \
-		--rm \
-		-v "$(PWD):$(PWD)" \
-		-w "$(PWD)" \
-		swift:5.3 \
-		bash Bootstrap/test.sh
 
-test-linux-arm:
+test-linux:
 	@docker run \
 		--rm \
 		-v "$(PWD):$(PWD)" \
@@ -31,4 +23,9 @@ clean-db:
 	@dropdb --username playground playground_test || true
 	@dropuser playground || true
 
-.PHONY: test-all test-swift test-linux test-linux-arm
+run-server-linux:
+	@docker-compose \
+		--file Bootstrap/docker-compose.yml \
+		--project-directory . \
+		up \
+		--build
