@@ -7,7 +7,7 @@ test-linux:
 		-v "$(PWD):$(PWD)" \
 		-w "$(PWD)" \
 		swift:5.4 \
-		bash -c 'apt-get update && apt-get -y install openssl libssl-dev libz-dev make && make test-swift'
+		bash -c Bootstrap/test.sh
 
 test-linux-arm:
 	@docker run \
