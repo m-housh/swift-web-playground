@@ -1,5 +1,6 @@
 import HttpPipeline
 import Foundation
+import Logging
 import NIO
 import ServerBootstrap
 import SiteMiddleware
@@ -17,12 +18,15 @@ let environment = try bootstrap(eventLoopGroup: eventLoopGroup)
   .perform()
   .unwrap()
 
+var logger = Logger(label: "web.playground")
+logger.logLevel = .debug
+
 run(
-  siteMiddleware(environment: environment),
-  on: 8080,
+  siteMiddleware(environment: environment, logger: logger),
+  on: Int(environment.envVars.port) ?? 8080,
   eventLoopGroup: eventLoopGroup,
   gzip: false,
-  baseUrl: URL(string: "http://localhost:8080")!
+  baseUrl: environment.envVars.baseUrl
 )
 
 try environment.database.shutdown()

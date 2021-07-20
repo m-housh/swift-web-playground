@@ -9,3 +9,21 @@ public struct User: Codable, Identifiable, Equatable {
     self.name = name
   }
 }
+
+public struct InsertUserRequest: Codable, Equatable {
+  public let name: String
+  
+  public init(name: String) {
+    self.name = name
+  }
+}
+
+public struct UpdateUserRequest: Codable, Equatable {
+  public let name: String?
+  
+  public init(
+    name: String?
+  ) {
+    self.name = name
+  }
+}

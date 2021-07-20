@@ -14,7 +14,7 @@ public struct DatabaseClient {
   public var insertUser: (InsertUserRequest) -> EitherIO<Error, User>
   public var migrate: () -> EitherIO<Error, Void>
   public var shutdown: () -> EitherIO<Error, Void>
-  public var updateUser: (User) -> EitherIO<Error, User>
+  public var updateUser: (UpdateUserRequest) -> EitherIO<Error, User>
   
   public init(
     deleteUser: @escaping (User.ID) -> EitherIO<Error, Void>,
@@ -23,7 +23,7 @@ public struct DatabaseClient {
     insertUser: @escaping (InsertUserRequest) -> EitherIO<Error, User>,
     migrate: @escaping () -> EitherIO<Error, Void>,
     shutdown: @escaping () -> EitherIO<Error, Void>,
-    updateUser: @escaping (User) -> EitherIO<Error, User>
+    updateUser: @escaping (UpdateUserRequest) -> EitherIO<Error, User>
   ) {
     self.fetchUsers = fetchUsers
     self.fetchUser = fetchUser
@@ -33,13 +33,16 @@ public struct DatabaseClient {
     self.updateUser = updateUser
     self.deleteUser = deleteUser
   }
-}
-
-extension DatabaseClient {
   
-  public struct InsertUserRequest {
-    public let name: String
-    public init(name: String) {
+  public struct UpdateUserRequest: Codable {
+    public let id: User.ID
+    public let name: String?
+    
+    public init(
+      id: User.ID,
+      name: String?
+    ) {
+      self.id = id
       self.name = name
     }
   }

@@ -7,12 +7,12 @@ import SharedModels
 public struct ServerEnvironment {
   public var database: DatabaseClient
   public var envVars: EnvVars
-  public var router: Router<CRUDRoute<User, InsertUser, User>>
+  public var router: Router<CRUDRoute<User, InsertUserRequest, UpdateUserRequest>>
   
   public init(
     database: DatabaseClient,
     envVars: EnvVars,
-    router: Router<CRUDRoute<User, InsertUser, User>>
+    router: Router<CRUDRoute<User, InsertUserRequest, UpdateUserRequest>>
   ) {
     self.database = database
     self.envVars = envVars

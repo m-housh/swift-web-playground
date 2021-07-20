@@ -7,7 +7,7 @@ import Foundation
 import Prelude
 
 public enum CRUDRoute<Model, Insert, Update>
-where Model: Codable, Model: Identifiable, Update: Codable, Insert: Codable
+  where Model: Codable, Model: Identifiable, Update: Codable, Insert: Codable
 {
   case fetch
   case fetchOne(id: Model.ID)

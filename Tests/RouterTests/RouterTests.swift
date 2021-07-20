@@ -6,10 +6,11 @@ import Optics
   import FoundationNetworking
 #endif
 @testable import Router
+@testable import SharedModels
 
 final class RouterTests: XCTestCase {
   
-  typealias Route = CRUDRoute<User, InsertUser, User>
+  typealias Route = CRUDRoute<User, InsertUserRequest, UpdateUserRequest>
   let router: Router<Route> = crudRouter("users", id: .uuid)
   
   func test_CRUDRouter_fetch() {
@@ -33,7 +34,7 @@ final class RouterTests: XCTestCase {
   }
   
   func test_CRUDRouter_insert() {
-    let user = InsertUser(name: "blob")
+    let user = InsertUserRequest(name: "blob")
     let route = Route.insert(user)
     let request = URLRequest(url: URL(string: "users")!)
       |> \.httpMethod .~ "post"
@@ -45,19 +46,15 @@ final class RouterTests: XCTestCase {
   }
   
   func test_CRUDRouter_update() {
-    let user = User(id: .init(), name: "blob")
-    let route = Route.update(id: user.id, update: user)
-    let request = URLRequest(url: URL(string: "users/\(user.id)")!)
+    let id = UUID()
+    let update = UpdateUserRequest(name: "blob")
+    let route = Route.update(id: id, update: update)
+    let request = URLRequest(url: URL(string: "users/\(id)")!)
       |> \.httpMethod .~ "post"
-      |> \.httpBody .~ (try? JSONEncoder().encode(user))
+      |> \.httpBody .~ (try? JSONEncoder().encode(update))
     
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertNotNil(request.httpBody)
-    XCTAssertEqual(request, router.request(for: .update(id: user.id, update: user)))
+    XCTAssertEqual(request, router.request(for: .update(id: id, update: update)))
   }
-}
-
-struct User: Codable, Identifiable, Equatable {
-  var id: UUID
-  var name: String
 }

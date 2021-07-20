@@ -31,13 +31,12 @@ class DatabaseLiveTests: DatabaseTestCase {
     let createdUser = try self.database.insertUser(.init(name: "blob"))
       .run.perform().unwrap()
     
-    var update = createdUser
-    update.name = "updated"
+    let update = DatabaseClient.UpdateUserRequest(id: createdUser.id, name: "updated")
     
     let updatedUser = try self.database.updateUser(update)
       .run.perform().unwrap()
     
-    XCTAssertEqual(updatedUser, update)
+    XCTAssertEqual(updatedUser.id, createdUser.id)
     XCTAssertEqual(updatedUser.name, "updated")
   }
   
