@@ -10,6 +10,7 @@ let package = Package(
   products: [
     .library(name: "DatabaseClient", targets: ["DatabaseClient"]),
     .library(name: "DatabaseClientLive", targets: ["DatabaseClientLive"]),
+    .library(name: "EnvVars", targets: ["EnvVars"]),
     .library(name: "Router", targets: ["Router"]),
     .executable(name: "server", targets: ["server"]),
     .library(name: "ServerBootstrap", targets: ["ServerBootstrap"]),
@@ -43,6 +44,9 @@ let package = Package(
         "DatabaseClientLive"
       ]),
     .target(
+      name: "EnvVars",
+      dependencies: []),
+    .target(
       name: "Router",
       dependencies: [
         "SharedModels",
@@ -63,6 +67,7 @@ let package = Package(
       name: "ServerBootstrap",
       dependencies: [
         "DatabaseClientLive",
+        "EnvVars",
         "Router",
         "SiteMiddleware",
         .product(name: "Either", package: "Prelude")
@@ -76,6 +81,7 @@ let package = Package(
       name: "SiteMiddleware",
       dependencies: [
         "DatabaseClient",
+        "EnvVars",
         "Router",
         .product(name: "ApplicativeRouter", package: "Web"),
         .product(name: "ApplicativeRouterHttpPipelineSupport", package: "Web"),

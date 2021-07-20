@@ -1,5 +1,6 @@
 import DatabaseClientLive
 import Either
+import EnvVars
 import Foundation
 import NIO
 import PostgresKit
@@ -11,9 +12,10 @@ public func bootstrap(
   eventLoopGroup: EventLoopGroup
 ) -> EitherIO<Error, ServerEnvironment> {
   EitherIO.debug(prefix: "Bootstraping playground...")
-    .flatMap({ loadEnvironment(eventLoopGroup: eventLoopGroup) })
+    .flatMap(loadEnvVars)
+    .flatMap(loadEnvironment(eventLoopGroup: eventLoopGroup))
     .flatMap(fireAndForget(connectToPostgres(eventLoopGroup: eventLoopGroup)))
-    .flatMap(fireAndForget(.debug(prefix: "playground Bootstraped!")))
+    .flatMap(fireAndForget(.debug(prefix: "Swift-Web Playground Bootstraped!")))
 }
 
 private let stepDivider = EitherIO.debug(prefix: "  -----------------------------")
@@ -33,24 +35,54 @@ private func connectToPostgres(
   }
 }
 
+private func loadEnvVars() -> EitherIO<Error, EnvVars> {
+  let envFilePath = URL(fileURLWithPath: #file)
+    .deletingLastPathComponent()
+    .deletingLastPathComponent()
+    .deletingLastPathComponent()
+    .appendingPathComponent(".playground-env")
+  
+  let decoder = JSONDecoder()
+  let encoder = JSONEncoder()
+  
+  let defaultEnvVars = EnvVars()
+  let defaultEnvVarsDict = (try? encoder.encode(defaultEnvVars))
+    .flatMap { try? decoder.decode([String: String].self, from: $0) }
+    ?? [:]
+  
+  let fileEnvDict = (try? Data(contentsOf: envFilePath))
+    .flatMap { try? decoder.decode([String: String].self, from: $0) }
+    ?? [:]
+  
+  let envVarDict = defaultEnvVarsDict
+    .merging(fileEnvDict, uniquingKeysWith: { $1 })
+    .merging(ProcessInfo.processInfo.environment, uniquingKeysWith: { $1 })
+  
+  let envVars = (try? JSONSerialization.data(withJSONObject: envVarDict))
+    .flatMap { try? decoder.decode(EnvVars.self, from: $0) }
+    ?? defaultEnvVars
+  
+  return pure(envVars)
+}
+
 private func loadEnvironment(
   eventLoopGroup: EventLoopGroup
-) -> EitherIO<Error, ServerEnvironment> {
+) -> (EnvVars) -> EitherIO<Error, ServerEnvironment> {
+  { envVars in
     return pure(
       ServerEnvironment(
         database: .live(
           pool: .init(
             source: PostgresConnectionSource(
-              configuration: PostgresConfiguration(
-                url: "postgres://playground:playground@localhost:5432/playground_development"
-              )!
+              configuration: PostgresConfiguration(url: envVars.databaseUrl)!
             ),
             on: eventLoopGroup)
         ),
+        envVars: envVars,
         router: UserRouter.init("users")
       )
     )
-//  }
+  }
 }
 
 extension EitherIO where A == Void, E == Error {

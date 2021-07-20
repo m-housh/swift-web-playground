@@ -1,24 +1,12 @@
 import ApplicativeRouterHttpPipelineSupport
 import DatabaseClient
+import Either
 import Logging
 import Foundation
 import HttpPipeline
 import Prelude
 import Router
 import SharedModels
-
-public func respondJson<A: Encodable>() -> (Conn<HeadersOpen, A>) -> IO<Conn<ResponseEnded, Data>> {
-  { conn in
-    let encoder = JSONEncoder()
-    let data = try! encoder.encode(conn.data)
-    
-    return conn.map(const(data))
-      |> writeHeader(.contentType(.json))
-      >=> writeHeader(.contentLength(data.count))
-      >=> closeHeaders
-      >=> end
-  }
-}
 
 func apiMiddleware(
   _ environment: ServerEnvironment
@@ -117,18 +105,16 @@ func apiMiddleware(
 }
 
 public func siteMiddleware(
-  environment: ServerEnvironment
+  environment: ServerEnvironment,
+  logger: Logger? = nil
 ) -> Middleware<StatusLineOpen, ResponseEnded, Prelude.Unit, Data> {
   
   requestLogger(
     logger: { string in
-      var logger = Logger(label: "Route Logger")
-      logger.logLevel = .debug
-      logger.debug(.init(stringLiteral: string))
+      logger?.debug(.init(stringLiteral: string))
     },
     uuid: UUID.init
-  ) <<<
-  ApplicativeRouterHttpPipelineSupport.route(
+  ) <<< ApplicativeRouterHttpPipelineSupport.route(
     router: environment.router,
     notFound: writeStatus(.notFound) >=> respond(json: "{}")
   )
