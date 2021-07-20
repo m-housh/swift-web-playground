@@ -9,6 +9,21 @@ on:
           - '*'
 
 jobs:
+  build:
+    name: MacOS
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install PostgreSQL
+      run: |
+        brew install postgresql
+        brew services start postgresql
+    - name: Setup PostgreSQL
+      run: |
+        make db
+    - name: Run tests
+      run: make test-swift
+
   ubuntu:
     name: Ubuntu
     runs-on: ubuntu-latest

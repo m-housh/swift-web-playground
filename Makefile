@@ -1,6 +1,5 @@
 test-swift:
-	@swift test \
-		--verbose
+	@swift test
 	
 test-linux:
 	@docker run \
