@@ -39,15 +39,22 @@ extension DatabaseClient {
           .mapExcept(requireSome("insertUser(\(request))"))
       },
       migrate: { () -> EitherIO<Error, Void> in
-        pool.database(logger: Logger(label: "Postgres"))
-          .run(
+        let database = pool.database(logger: Logger(label: "Postgres"))
+          
+        return sequence([
+          database.run(
+            #"CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "public""#
+          ),
+          database.run(
             """
               CREATE TABLE IF NOT EXISTS "users"(
-                "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY NOT NULL,
+                "id" uuid DEFAULT uuid_generate_v1mc() PRIMARY KEY NOT NULL,
                 "name" character varying NOT NULL
               )
               """
           )
+        ])
+        .map(const(()))
 
       },
       shutdown: {

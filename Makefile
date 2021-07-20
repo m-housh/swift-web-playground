@@ -6,7 +6,7 @@ test-linux:
 		--rm \
 		-v "$(PWD):$(PWD)" \
 		-w "$(PWD)" \
-		swift:5.4 \
+		swift:5.3 \
 		bash Bootstrap/test.sh
 
 test-linux-arm:
