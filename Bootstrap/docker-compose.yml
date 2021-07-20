@@ -18,6 +18,6 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgres://playground:@5432/payground_development
+      DATABASE_URL: postgres://playground:@db:5432/playground_development
     ports:
       - '8080:8080'

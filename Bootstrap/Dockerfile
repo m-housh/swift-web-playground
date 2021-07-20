@@ -17,7 +17,7 @@ RUN swift build \
   
 FROM swift:5.3-slim
 
-RUN apt-get --fix-missing
+RUN apt-get --fix-missing update
 RUN apt-get install -y cmake libpq-dev libssl-dev libz-dev openssl
 
 WORKDIR /run
