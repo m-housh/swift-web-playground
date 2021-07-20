@@ -14,9 +14,9 @@ test-linux-arm:
 		--rm \
 		-v "$(PWD):$(PWD)" \
 		-w "$(PWD)" \
-		--network host \
-		swiftarm/swift:latest \
-		bash -c 'apt-get update && apt-get -y install openssl libssl-dev libz-dev make && make test-swift'
+		--platform linux/amd64 \
+		swift:5.3 \
+		bash Bootstrap/test.sh
 
 test-all: test-swift test-linux
 
