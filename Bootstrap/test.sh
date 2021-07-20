@@ -6,4 +6,5 @@ service postgresql start
 sudo -u postgres createuser --superuser playground
 sudo -u postgres psql "ALTER USER playground PASSWORD 'playground';"
 sudo -u postgres createdb --owner playground playground_test
+sudo chown "$USER":"$USER" Bootstrap/test.sh
 swift test || exit $?
