@@ -1,13 +1,23 @@
 test-swift:
-	swift test --parallel
-
+	@swift test \
+		--verbose
+	
 test-linux:
-	docker run \
+	@docker run \
+		--rm \
+		-v "$(PWD):$(PWD)" \
+		-w "$(PWD)"
+		swift:5.4 \
+		bash -c 'apt-get update && apt-get -y install openssl libssl-dev libz-dev make && make test-swift'
+
+test-linux-arm:
+	@docker run \
 		--rm \
 		-v "$(PWD):$(PWD)" \
 		-w "$(PWD)" \
-		swift:5.4 \
-		bash -c 'apt-get update && apt-get -y install openssl libssl-dev libz-dev && make test-swift'
+		--network host \
+		swiftarm/swift:latest \
+		bash -c 'apt-get update && apt-get -y install openssl libssl-dev libz-dev make && make test-swift'
 
 test-all: test-swift test-linux
 
@@ -22,4 +32,4 @@ clean-db:
 	@dropdb --username playground playground_test || true
 	@dropuser playground || true
 
-.PHONY: test-all test-swift test-linux
+.PHONY: test-all test-swift test-linux test-linux-arm
