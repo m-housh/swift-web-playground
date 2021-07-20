@@ -8,10 +8,15 @@ public typealias UserRouter = Router<UserRoute>
 extension UserRouter {
   
   public init(
-    _ path: String,
+    _ path: String...,
     encoder jsonEncoder: JSONEncoder = .init(),
     decoder jsonDecoder: JSONDecoder = .init()
   ) {
-    self = crudRouter(path, id: .uuid, encoder: jsonEncoder, decoder: jsonDecoder)
+    self = crudRouter(
+      path,
+      id: .uuid,
+      encoder: jsonEncoder,
+      decoder: jsonDecoder
+    )
   }
 }

@@ -23,8 +23,8 @@ public enum CRUDRouteType: CaseIterable, Equatable {
     
   static let requiresId: [Self] = [.fetchOne, .update, .delete]
   
-  public func router<M, I, U>(
-    path: String,
+  func router<M, I, U>(
+    path: [String],
     id idIso: PartialIso<String, M.ID>?,
     encoder jsonEncoder: JSONEncoder,
     decoder jsonDecoder: JSONDecoder
@@ -35,26 +35,31 @@ public enum CRUDRouteType: CaseIterable, Equatable {
       assert(!Self.requiresId.contains(self), "A partial iso is required for the `id` routes.")
     }
     
+    assert(path.count > 0, "No path components found")
+    let firstPathComponent = path.first!
+    let rest = path.suffix(from: 1)
+    
     switch self {
     case .fetch:
       // matches GET /{{ path }}
       return .case(/CRUDRoute<M, I, U>.fetch)
         <¢> get // httpMethod
-        %> lit(path) // route path
+        %> parsePath(firstPathComponent, rest: rest)
         <% end
       
     case .fetchOne:
       // matches GET /{{ path }}/:id
       return .case(/CRUDRoute<M, I, U>.fetchOne)
         <¢> get // httpMethod
-        %> lit(path) %> pathParam(idIso!) // route path
+        %> parsePath(firstPathComponent, rest: rest)
+        %> pathParam(idIso!)
         <% end
       
     case .insert:
       // matches POST /{{ path }}
       return .case(/CRUDRoute<M, I, U>.insert)
           <¢> post // httpMethod
-          %> lit(path) // route path
+          %> parsePath(firstPathComponent, rest: rest)
           %> jsonBody(I.self, encoder: jsonEncoder, decoder: jsonDecoder) // body
           <% end
       
@@ -62,7 +67,8 @@ public enum CRUDRouteType: CaseIterable, Equatable {
       // matches POST /{{ path }}/:id
       return .case(/CRUDRoute<M, I, U>.update)
         <¢> post // httpMethod
-        %> lit(path) %> pathParam(idIso!) // route path
+        %> parsePath(firstPathComponent, rest: rest)
+        %> pathParam(idIso!) // route path
         <%> jsonBody(U.self) // body
         <% end
       
@@ -70,7 +76,8 @@ public enum CRUDRouteType: CaseIterable, Equatable {
       // matches DELETE /{{ path }}/:id
       return .case(/CRUDRoute<M, I, U>.delete)
         <¢> ApplicativeRouter.delete // httpMethod
-        %> lit(path) %> pathParam(idIso!) // route path
+        %> parsePath(firstPathComponent, rest: rest)
+        %> pathParam(idIso!) // route path
         <% end
     }
   }
@@ -78,24 +85,43 @@ public enum CRUDRouteType: CaseIterable, Equatable {
 
 // Create a router with the supplied routes.
 public func crudRouter<Model, Insert, Update>(
-  _ path: String,
-  routes: [CRUDRouteType],
+  _ path: [String],
+  routes: [CRUDRouteType] = .all,
   id idIso: PartialIso<String, Model.ID>? = nil,
   encoder jsonEncoder: JSONEncoder = .init(),
   decoder jsonDecoder: JSONDecoder = .init()
 ) -> Router<CRUDRoute<Model, Insert, Update>>
   where Model: Codable, Model: Identifiable, Update: Codable
 {
-  let path = sanitizePath(path)
+  let path = path.map(sanitizePath)
   return routes
     .map { $0.router(path: path, id: idIso, encoder: jsonEncoder, decoder: jsonDecoder) }
     .reduce(.empty, <|>)
   
 }
 
+// Create a router with the supplied routes.
+public func crudRouter<Model, Insert, Update>(
+  _ path: String...,
+  routes: [CRUDRouteType] = .all,
+  id idIso: PartialIso<String, Model.ID>? = nil,
+  encoder jsonEncoder: JSONEncoder = .init(),
+  decoder jsonDecoder: JSONDecoder = .init()
+) -> Router<CRUDRoute<Model, Insert, Update>>
+  where Model: Codable, Model: Identifiable, Update: Codable
+{
+  crudRouter(
+    path,
+    routes: routes,
+    id: idIso,
+    encoder: jsonEncoder,
+    decoder: jsonDecoder
+  )
+}
+
 /// Create a router with the supplied routes.
 public func crudRouter<M, I, U>(
-  _ path: String,
+  _ path: String...,
   id idIso: PartialIso<String, M.ID>? = nil,
   encoder jsonEncoder: JSONEncoder = .init(),
   decoder jsonDecoder: JSONDecoder = .init(),
@@ -112,27 +138,17 @@ public func crudRouter<M, I, U>(
   )
 }
 
-// Create a router using all the routes.
-public func crudRouter<M, I, U>(
-  _ path: String,
-  id idIso: PartialIso<String, M.ID>,
-  encoder jsonEncoder: JSONEncoder = .init(),
-  decoder jsonDecoder: JSONDecoder = .init()
-) -> Router<CRUDRoute<M, I, U>>
-  where M: Codable, M: Identifiable, U: Codable, I: Codable
-{
-  crudRouter(
-    path,
-    routes: CRUDRouteType.allCases,
-    id: idIso,
-    encoder: jsonEncoder,
-    decoder: jsonDecoder
-  )
-}
-
 private func sanitizePath(_ path: String) -> String {
   if path.starts(with: "/") {
     return String(path.dropFirst())
   }
   return path
+}
+
+private func parsePath(_ first: String, rest: ArraySlice<String>) -> Router<Void> {
+  rest.reduce(lit(first), { $0 %> lit($1) })
+}
+
+extension Array where Element == CRUDRouteType {
+  public static var all: Self { CRUDRouteType.allCases }
 }
