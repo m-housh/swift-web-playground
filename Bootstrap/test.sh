@@ -1,7 +1,7 @@
 #!/bin/sh
 apt-get --fix-missing update
 apt-get install -y \
-  cmake libpq-dev libssl-dev libz-dev openssl postgresql sudo
+  cmake libpq-dev libssl-dev libz-dev openssl postgresql sudo libsqlite3-dev
 service postgresql start
 sudo -u postgres createuser --superuser playground
 sudo -u postgres psql "ALTER USER playground PASSWORD 'playground';"

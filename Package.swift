@@ -18,7 +18,7 @@ let package = Package(
     .library(name: "SiteMiddleware", targets: ["SiteMiddleware"]),
   ],
   dependencies: [
-    .package(name: "Web", url: "https://github.com/pointfreeco/swift-web.git", .branch("main")),
+    .package(name: "Web", url: "https://github.com/pointfreeco/swift-web.git", .revision("616f365")),
     .package(name: "Prelude", url: "https://github.com/pointfreeco/swift-prelude.git", .revision("9240a1f")),
     .package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "0.5.0"),
     .package(url: "https://github.com/vapor/postgres-kit.git", from: "2.3.0"),
