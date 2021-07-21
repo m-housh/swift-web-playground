@@ -5,7 +5,7 @@ import Foundation
 import NIO
 import PostgresKit
 import Prelude
-import Router
+import ServerRouter
 import SiteMiddleware
 
 public func bootstrap(

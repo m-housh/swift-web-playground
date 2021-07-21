@@ -5,7 +5,9 @@ import Optics
 #if canImport(FoundationNetworking)
   import FoundationNetworking
 #endif
-@testable import Router
+
+@testable import CrudRouter
+@testable import ServerRouter
 @testable import SharedModels
 
 final class RouterTests: XCTestCase {

@@ -1,7 +1,8 @@
 import ApplicativeRouter
+import CrudRouter
 import DatabaseClient
 import EnvVars
-import Router
+import ServerRouter
 import SharedModels
 
 public struct ServerEnvironment {

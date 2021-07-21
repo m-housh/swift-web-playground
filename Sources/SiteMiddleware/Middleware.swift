@@ -5,7 +5,7 @@ import Logging
 import Foundation
 import HttpPipeline
 import Prelude
-import Router
+import ServerRouter
 import SharedModels
 
 public func siteMiddleware(

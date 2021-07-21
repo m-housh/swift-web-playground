@@ -1,4 +1,5 @@
 import ApplicativeRouter
+import CrudRouter
 import Foundation
 import SharedModels
 
