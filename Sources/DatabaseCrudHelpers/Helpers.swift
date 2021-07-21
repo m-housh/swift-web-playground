@@ -4,7 +4,7 @@ import PostgresKit
 
 extension EitherIO where E == Error {
   /// Create a new `EitherIO` from an event loop future.
-  init(_ eventLoopFuture: @escaping @autoclosure () -> EventLoopFuture<A>) {
+  public init(_ eventLoopFuture: @escaping @autoclosure () -> EventLoopFuture<A>) {
     self.init(
       run: .init { callback in
         eventLoopFuture()
@@ -13,6 +13,15 @@ extension EitherIO where E == Error {
           }
       }
     )
+  }
+  
+  /// Return an `EitherIO` from a closure that can throw errors.
+  public static func catching(_ work: @escaping () throws -> EitherIO) -> EitherIO {
+    do {
+      return try work()
+    } catch {
+      return .init(run: .init { .left(error) })
+    }
   }
 }
 
@@ -28,7 +37,7 @@ extension Either where L: Error {
 }
 
 extension PostgresDatabase {
-  func run(_ query: SQLQueryString) -> EitherIO<Error, Void> {
+  public func run(_ query: SQLQueryString) -> EitherIO<Error, Void> {
     EitherIO(self.sql().raw(query).run())
   }
 }
@@ -36,32 +45,38 @@ extension PostgresDatabase {
 private let logger = Logger(label: "Sqlite")
 
 extension EventLoopGroupConnectionPool where Source == PostgresConnectionSource {
-  var sqlDatabase: SQLDatabase {
+  public var sqlDatabase: SQLDatabase {
     self.database(logger: logger).sql()
   }
 }
 
 extension SQLQueryFetcher {
   
-  func first<D>(decoding: D.Type) -> EitherIO<Error, D?> where D: Decodable {
+  public func first<D>(decoding: D.Type) -> EitherIO<Error, D?> where D: Decodable {
     .init(self.first(decoding: D.self))
   }
 
-  func all<D>(decoding: D.Type) -> EitherIO<Error, [D]> where D: Decodable {
+  public func all<D>(decoding: D.Type) -> EitherIO<Error, [D]> where D: Decodable {
     .init(self.all(decoding: D.self))
   }
 
-  func run() -> EitherIO<Error, Void> {
+  public func run() -> EitherIO<Error, Void> {
     .init(self.run())
   }
 }
 
 extension SQLQueryBuilder {
-  func run() -> EitherIO<Error, Void> {
+  public func run() -> EitherIO<Error, Void> {
     .init(self.run())
   }
 }
 
 extension String {
-  static let all = "*"
+  public static let all = "*"
 }
+
+//extension String: SQLExpression {
+//  public func serialize(to serializer: inout SQLSerializer) {
+//    SQLIdentifier(self).serialize(to: &serializer)
+//  }
+//}

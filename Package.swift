@@ -11,6 +11,7 @@ let package = Package(
     .library(name: "CrudRouter", targets: ["CrudRouter"]),
     .library(name: "DatabaseClient", targets: ["DatabaseClient"]),
     .library(name: "DatabaseClientLive", targets: ["DatabaseClientLive"]),
+    .library(name: "DatabaseCrudHelpers", targets: ["DatabaseCrudHelpers"]),
     .library(name: "EnvVars", targets: ["EnvVars"]),
     .library(name: "ServerRouter", targets: ["ServerRouter"]),
     .executable(name: "server", targets: ["server"]),
@@ -42,6 +43,7 @@ let package = Package(
       dependencies: [
         "SharedModels",
         "DatabaseClient",
+        "DatabaseCrudHelpers",
         .product(name: "Either", package: "Prelude"),
         .product(name: "PostgresKit", package: "postgres-kit"),
       ]),
@@ -50,6 +52,12 @@ let package = Package(
       dependencies: [
         "DatabaseClientLive"
       ]),
+    .target(
+      name: "DatabaseCrudHelpers",
+      dependencies: [
+        .product(name: "Either", package: "Prelude"),
+        .product(name: "PostgresKit", package: "postgres-kit"),
+    ]),
     .target(
       name: "EnvVars",
       dependencies: []),
@@ -100,7 +108,6 @@ let package = Package(
         .product(name: "ApplicativeRouter", package: "Web"),
         .product(name: "ApplicativeRouterHttpPipelineSupport", package: "Web"),
         .product(name: "HttpPipeline", package: "Web"),
-//        .product(name: "Either", package: "Prelude"),
       ]),
   ]
 )
