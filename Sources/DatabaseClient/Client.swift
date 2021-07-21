@@ -49,7 +49,7 @@ public struct DatabaseClient {
     self.updateUser = updateUser
   }
   
-  public struct InsertFavoriteRequest: Equatable {
+  public struct InsertFavoriteRequest: Codable, Equatable {
     public let userId: User.ID
     public let description: String
     
@@ -67,7 +67,7 @@ public struct DatabaseClient {
     }
   }
   
-  public struct UpdateFavoriteRequest: Equatable {
+  public struct UpdateFavoriteRequest: Codable, Equatable, Identifiable {
     public let id: UserFavorite.ID
     public let description: String?
     
@@ -77,7 +77,7 @@ public struct DatabaseClient {
     }
   }
   
-  public struct UpdateUserRequest: Codable, Equatable {
+  public struct UpdateUserRequest: Codable, Equatable, Identifiable {
     public let id: User.ID
     public let name: String?
     

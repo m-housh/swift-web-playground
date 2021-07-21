@@ -11,39 +11,14 @@ extension DatabaseClient {
     pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
   ) -> Self {
     Self.init(
-      deleteFavorite: delete(from: "user_favorites", on: pool),
-      deleteUser: delete(from: "users", on: pool),
-      fetchFavorites: { optionalUserId in
-        var request = pool.sqlDatabase.select()
-          .columns(.all)
-          .from("user_favorites")
-        
-        if let userId = optionalUserId {
-          request = request.where("userId", .equal, userId)
-        }
-        
-        return request.all(decoding: UserFavorite.self)
-        
-      },
-      fetchUsers: fetch(from: "users", on: pool),
-      fetchFavorite: fetchId(from: "user_favorites", on: pool),
-      insertFavorite: { request -> EitherIO<Error, UserFavorite> in
-        pool.sqlDatabase.insert(into: "user_favoirtes")
-          .columns("userId", "description")
-          .values(request.userId, request.description)
-          .returning(.all)
-          .first(decoding: UserFavorite.self)
-          .mapExcept(requireSome("insertFavorite(\(request))"))
-      },
-      fetchUser: fetchId(from: "users", on: pool),
-      insertUser: { request -> EitherIO<Error, User> in
-        pool.sqlDatabase.insert(into: "users")
-          .columns("name")
-          .values(request.name)
-          .returning("*")
-          .first(decoding: User.self)
-          .mapExcept(requireSome("insertUser(\(request))"))
-      },
+      deleteFavorite: delete(from: .favorites, on: pool),
+      deleteUser: delete(from: .users, on: pool),
+      fetchFavorites: _fetchFavorites(on: pool),
+      fetchUsers: fetch(from: .users, on: pool),
+      fetchFavorite: fetchId(from: .favorites, on: pool),
+      insertFavorite: insert(to: .favorites, on: pool),
+      fetchUser: fetchId(from: .users, on: pool),
+      insertUser: insert(to: .users, on: pool),
       migrate: { () -> EitherIO<Error, Void> in
         let database = pool.database(logger: Logger(label: "Postgres"))
           
@@ -61,7 +36,7 @@ extension DatabaseClient {
           ),
           database.run(
             """
-              CREATE TABLE IF NOT EXISTS "users"(
+              CREATE TABLE IF NOT EXISTS "user_favorites"(
                 "id" uuid DEFAULT uuid_generate_v1mc() PRIMARY KEY NOT NULL,
                 "userId" uuid REFERENCES "users" ("id") NOT NULL,
                 "description" character varying NOT NULL
@@ -83,23 +58,8 @@ extension DatabaseClient {
           }
         })
       },
-      updateFavorite: { request -> EitherIO<Error, UserFavorite> in
-        pool.sqlDatabase.update("user_favorites")
-          .where("id", .equal, request.id)
-          .set("description", to: request.description)
-          .returning(.all)
-          .first(decoding: UserFavorite.self)
-          .mapExcept(requireSome("updateFavorite(\(request))"))
-      },
-      updateUser: { request -> EitherIO<Error, User> in
-        pool.sqlDatabase.update("users")
-          .where("id", .equal, request.id)
-          .set("name", to: request.name)
-          .returning("*")
-          .first(decoding: User.self)
-          .mapExcept(requireSome("updateUser(\(request))"))
-
-      }
+      updateFavorite: update(table: .favorites, on: pool),
+      updateUser: update(table: .users, on: pool)
     )
   }
   
@@ -135,20 +95,20 @@ struct RequireSomeError: Error {
 }
 
 func delete<ID>(
-  from tableName: String,
+  from table: Table,
   on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
 ) -> (ID) -> EitherIO<Error, Void>
   where ID: Encodable
 {
   { id -> EitherIO<Error, Void> in
-    pool.sqlDatabase.delete(from: tableName)
+    pool.sqlDatabase.delete(from: table)
       .where("id", .equal, id)
       .run()
   }
 }
 
 func fetch<A>(
-  from tableName: String,
+  from table: Table,
   on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
 ) -> () -> EitherIO<Error, [A]>
   where A: Decodable
@@ -156,13 +116,31 @@ func fetch<A>(
   {
     pool.sqlDatabase.select()
       .columns(.all)
-      .from(tableName)
+      .from(table)
       .all(decoding: A.self)
   }
 }
 
+func _fetchFavorites(
+  on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
+) -> (User.ID?) -> EitherIO<Error, [UserFavorite]>
+{
+  { userId in
+    let table: Table = .favorites
+    guard let userId = userId else {
+      return fetch(from: table, on: pool)()
+    }
+    
+    return pool.sqlDatabase.select()
+      .columns(.all)
+      .from(table)
+      .where("userId", .equal, userId)
+      .all(decoding: UserFavorite.self)
+  }
+}
+
 func fetchId<ID, A>(
-  from tableName: String,
+  from table: Table,
   on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
 ) -> (ID) -> EitherIO<Error, A>
   where ID: Encodable, A: Decodable
@@ -170,20 +148,86 @@ func fetchId<ID, A>(
   { id -> EitherIO<Error, A> in
     pool.sqlDatabase.select()
       .columns(.all)
-      .from(tableName)
+      .from(table)
+      .where("id", .equal, id)
       .first(decoding: A.self)
-      .mapExcept(requireSome("insert: \(tableName) : \(id)"))
+      .mapExcept(requireSome("fetchId: \(table) : \(id)"))
   }
 }
 
-//func insert<I, A>(
-//  to tableName: String,
-//  on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
-//) -> (I) -> EitherIO<Error, A>
-//  where I: Identifiable, I.ID: Encodable, A: Decodable
-//{
-//  { request in
-//    pool.sqlDatabase.insert(into: tableName)
-//      .
-//  }
-//}
+func insert<I, A>(
+  to table: Table,
+  on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
+) -> (I) -> EitherIO<Error, A>
+  where I: Encodable, A: Decodable
+{
+  { request in
+    let promise = pool.eventLoopGroup.next().makePromise(of: A.self)
+    do {
+      promise.succeed(
+        try pool.sqlDatabase.insert(into: table)
+          .model(request)
+          .returning(.all)
+          .first(decoding: A.self)
+          .mapExcept(requireSome("insert: \(table) : \(request)"))
+          .run
+          .perform()
+          .unwrap()
+      )
+    } catch {
+      promise.fail(error)
+    }
+    
+    return .init(promise.futureResult)
+  }
+}
+
+func update<U, A>(
+  table: Table,
+  on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
+) -> (U) -> EitherIO<Error, A>
+where U: Encodable, U: Identifiable, U.ID: Encodable, A: Decodable
+{
+  { request in
+    let promise = pool.eventLoopGroup.next().makePromise(of: A.self)
+    do {
+      promise.succeed(
+        try pool.sqlDatabase.update(table)
+          .where("id", .equal, request.id)
+          .set(model: request)
+          .returning(.all)
+          .first(decoding: A.self)
+          .mapExcept(requireSome("update: \(table) : \(request)"))
+          .run
+          .perform()
+          .unwrap()
+      )
+    } catch {
+      promise.fail(error)
+    }
+    
+    return .init(promise.futureResult)
+  }
+}
+
+enum Table: CustomStringConvertible {
+  case users
+  case favorites
+  
+  var tableName: String {
+    switch self {
+    case .users:
+      return "users"
+    case .favorites:
+      return "user_favorites"
+    }
+  }
+  
+  var description: String { tableName }
+}
+
+extension Table: SQLExpression {
+  func serialize(to serializer: inout SQLSerializer) {
+    SQLIdentifier(tableName).serialize(to: &serializer)
+  }
+}
