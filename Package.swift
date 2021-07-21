@@ -24,6 +24,7 @@ let package = Package(
     .package(name: "Prelude", url: "https://github.com/pointfreeco/swift-prelude.git", .revision("9240a1f")),
     .package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "0.5.0"),
     .package(url: "https://github.com/vapor/postgres-kit.git", from: "2.3.0"),
+    .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
   ],
   targets: [
     .target(
@@ -108,6 +109,7 @@ let package = Package(
         .product(name: "ApplicativeRouter", package: "Web"),
         .product(name: "ApplicativeRouterHttpPipelineSupport", package: "Web"),
         .product(name: "HttpPipeline", package: "Web"),
+        .product(name: "Logging", package: "swift-log")
       ]),
   ]
 )

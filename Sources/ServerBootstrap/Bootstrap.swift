@@ -79,7 +79,7 @@ private func loadEnvironment(
             on: eventLoopGroup)
         ),
         envVars: envVars,
-        router: UserRouter.init("api", "users")
+        router: router(decoder: JSONDecoder(), encoder: JSONEncoder())
       )
     )
   }
