@@ -75,6 +75,7 @@ let package = Package(
       dependencies: [
         "SharedModels",
         "CrudRouter",
+        "DatabaseClient", // TODO: Remove this dependency if possible
         .product(name: "ApplicativeRouter", package: "Web"),
         .product(name: "CasePaths", package: "swift-case-paths")
       ]),

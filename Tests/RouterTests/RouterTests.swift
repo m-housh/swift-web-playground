@@ -6,17 +6,17 @@ import Optics
   import FoundationNetworking
 #endif
 
+@testable import DatabaseClient
 @testable import CrudRouter
 @testable import ServerRouter
 @testable import SharedModels
 
 final class RouterTests: XCTestCase {
   
-  typealias Route = CRUDRoute<User, InsertUserRequest, UpdateUserRequest>
-  let router: Router<Route> = crudRouter("api", "v1", "users", id: .uuid)
+  let router: Router<UserRoute> = crudRouter("api", "v1", "users", id: .uuid)
   
   func test_CRUDRouter_fetch() {
-    let route = Route.fetch
+    let route = UserRoute.fetch
     let request = URLRequest(url: URL(string: "api/v1/users")!)
       |> \.httpMethod .~ "get"
     
@@ -27,7 +27,7 @@ final class RouterTests: XCTestCase {
   
   func test_CRUDRouter_fetchOne() {
     let id = UUID()
-    let route = Route.fetchOne(id: id)
+    let route = UserRoute.fetchOne(id: id)
     let request = URLRequest(url: URL(string: "api/v1/users/\(id)")!)
       |> \.httpMethod .~ "get"
     
@@ -36,8 +36,8 @@ final class RouterTests: XCTestCase {
   }
   
   func test_CRUDRouter_insert() {
-    let user = InsertUserRequest(name: "blob")
-    let route = Route.insert(user)
+    let user = DatabaseClient.InsertUserRequest(name: "blob")
+    let route = UserRoute.insert(user)
     let request = URLRequest(url: URL(string: "api/v1/users")!)
       |> \.httpMethod .~ "post"
       |> \.httpBody .~ (try? JSONEncoder().encode(user))
@@ -49,8 +49,8 @@ final class RouterTests: XCTestCase {
   
   func test_CRUDRouter_update() {
     let id = UUID()
-    let update = UpdateUserRequest(name: "blob")
-    let route = Route.update(id: id, update: update)
+    let update = DatabaseClient.UpdateUserRequest(id: id, name: "blob")
+    let route = UserRoute.update(id: id, update: update)
     let request = URLRequest(url: URL(string: "api/v1/users/\(id)")!)
       |> \.httpMethod .~ "post"
       |> \.httpBody .~ (try? JSONEncoder().encode(update))

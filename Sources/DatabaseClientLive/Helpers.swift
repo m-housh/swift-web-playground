@@ -61,3 +61,7 @@ extension SQLQueryBuilder {
     .init(self.run())
   }
 }
+
+extension String {
+  static let all = "*"
+}
