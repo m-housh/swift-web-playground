@@ -20,8 +20,11 @@ let package = Package(
     .library(name: "SiteMiddleware", targets: ["SiteMiddleware"]),
   ],
   dependencies: [
-    .package(name: "Web", url: "https://github.com/pointfreeco/swift-web.git", .revision("616f365")),
-    .package(name: "Prelude", url: "https://github.com/pointfreeco/swift-prelude.git", .revision("9240a1f")),
+    .package(
+      name: "Web", url: "https://github.com/pointfreeco/swift-web.git", .revision("616f365")),
+    .package(
+      name: "Prelude", url: "https://github.com/pointfreeco/swift-prelude.git", .revision("9240a1f")
+    ),
     .package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "0.5.0"),
     .package(url: "https://github.com/vapor/postgres-kit.git", from: "2.3.0"),
     .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
@@ -31,7 +34,7 @@ let package = Package(
       name: "CrudRouter",
       dependencies: [
         .product(name: "ApplicativeRouter", package: "Web"),
-        .product(name: "CasePaths", package: "swift-case-paths")
+        .product(name: "CasePaths", package: "swift-case-paths"),
       ]),
     .target(
       name: "DatabaseClient",
@@ -58,7 +61,7 @@ let package = Package(
       dependencies: [
         .product(name: "Either", package: "Prelude"),
         .product(name: "PostgresKit", package: "postgres-kit"),
-    ]),
+      ]),
     .target(
       name: "EnvVars",
       dependencies: []),
@@ -68,7 +71,7 @@ let package = Package(
         "ServerBootstrap",
         "SiteMiddleware",
         .product(name: "ApplicativeRouter", package: "Web"),
-        .product(name: "CasePaths", package: "swift-case-paths")
+        .product(name: "CasePaths", package: "swift-case-paths"),
       ]),
     .target(
       name: "ServerBootstrap",
@@ -77,23 +80,23 @@ let package = Package(
         "EnvVars",
         "ServerRouter",
         "SiteMiddleware",
-        .product(name: "Either", package: "Prelude")
+        .product(name: "Either", package: "Prelude"),
       ]),
     .target(
       name: "ServerRouter",
       dependencies: [
         "SharedModels",
         "CrudRouter",
-        "DatabaseClient", // TODO: Remove this dependency if possible
+        "DatabaseClient",  // TODO: Remove this dependency if possible
         .product(name: "ApplicativeRouter", package: "Web"),
-        .product(name: "CasePaths", package: "swift-case-paths")
+        .product(name: "CasePaths", package: "swift-case-paths"),
       ]),
     .testTarget(
       name: "RouterTests",
       dependencies: [
         "ServerRouter",
         .product(name: "ApplicativeRouter", package: "Web"),
-        .product(name: "CasePaths", package: "swift-case-paths")
+        .product(name: "CasePaths", package: "swift-case-paths"),
       ]),
     .target(
       name: "SharedModels",
@@ -109,7 +112,7 @@ let package = Package(
         .product(name: "ApplicativeRouter", package: "Web"),
         .product(name: "ApplicativeRouterHttpPipelineSupport", package: "Web"),
         .product(name: "HttpPipeline", package: "Web"),
-        .product(name: "Logging", package: "swift-log")
+        .product(name: "Logging", package: "swift-log"),
       ]),
   ]
 )

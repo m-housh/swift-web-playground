@@ -7,8 +7,7 @@ public func deleteBuilder<ID>(
   on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>,
   idColumn: SQLExpression = SQLIdentifier("id")
 ) -> SQLDeleteBuilder
-  where ID: Encodable
-{
+where ID: Encodable {
   pool.sqlDatabase.delete(from: table)
     .where(idColumn, .equal, SQLBind(id))
 }
@@ -28,8 +27,7 @@ public func fetchIdBuilder<ID>(
   on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>,
   idColumn: SQLExpression = SQLIdentifier("id")
 ) -> SQLSelectBuilder
-  where ID: Encodable
-{
+where ID: Encodable {
   pool.sqlDatabase.select()
     .columns(.all)
     .from(table)
@@ -41,8 +39,7 @@ public func insertBuilder<Insert>(
   to table: SQLExpression,
   on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
 ) throws -> SQLInsertBuilder
-  where Insert: Encodable
-{
+where Insert: Encodable {
   try pool.sqlDatabase.insert(into: table)
     .model(model)
 }
@@ -52,8 +49,7 @@ public func updateBuilder<Update>(
   table: SQLExpression,
   on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
 ) throws -> SQLUpdateBuilder
-  where Update: Encodable
-{
+where Update: Encodable {
   try pool.sqlDatabase.update(table)
     .set(model: model)
 }

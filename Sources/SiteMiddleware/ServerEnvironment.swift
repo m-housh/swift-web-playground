@@ -9,7 +9,7 @@ public struct ServerEnvironment {
   public var database: DatabaseClient
   public var envVars: EnvVars
   public var router: Router<ServerRoute>
-  
+
   public init(
     database: DatabaseClient,
     envVars: EnvVars,

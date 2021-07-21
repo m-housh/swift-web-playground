@@ -1,14 +1,14 @@
 import ApplicativeRouter
 import CasePaths
 import Foundation
+import Prelude
+
 #if canImport(FoundationNetworking)
   import FoundationNetworking
 #endif
-import Prelude
 
 public enum CRUDRoute<Model, Insert, Update>
-  where Model: Codable, Model: Identifiable, Update: Codable, Insert: Codable
-{
+where Model: Codable, Model: Identifiable, Update: Codable, Insert: Codable {
   case fetch
   case fetchOne(id: Model.ID)
   case insert(Insert)
@@ -16,68 +16,68 @@ public enum CRUDRoute<Model, Insert, Update>
   case delete(id: Model.ID)
 }
 
-extension CRUDRoute: Equatable where Model: Equatable, Model.ID: Equatable, Update: Equatable, Insert: Equatable { }
+extension CRUDRoute: Equatable
+where Model: Equatable, Model.ID: Equatable, Update: Equatable, Insert: Equatable {}
 
 public enum CRUDRouteType: CaseIterable, Equatable {
   case fetch, fetchOne, insert, update, delete
-    
+
   static let requiresId: [Self] = [.fetchOne, .update, .delete]
-  
+
   func router<M, I, U>(
     path: [String],
     id idIso: PartialIso<String, M.ID>?,
     encoder jsonEncoder: JSONEncoder,
     decoder jsonDecoder: JSONDecoder
   ) -> Router<CRUDRoute<M, I, U>>
-    where M: Codable, M: Identifiable, U: Codable, I: Codable
-  {
+  where M: Codable, M: Identifiable, U: Codable, I: Codable {
     if idIso == nil {
       assert(!Self.requiresId.contains(self), "A partial iso is required for the `id` routes.")
     }
-    
+
     assert(path.count > 0, "No path components found")
     let firstPathComponent = path.first!
     let rest = path.suffix(from: 1)
-    
+
     switch self {
     case .fetch:
       // matches GET /{{ path }}
       return .case(/CRUDRoute<M, I, U>.fetch)
-        <¢> get // httpMethod
+        <¢> get  // httpMethod
         %> parsePath(firstPathComponent, rest: rest)
         <% end
-      
+
     case .fetchOne:
       // matches GET /{{ path }}/:id
       return .case(/CRUDRoute<M, I, U>.fetchOne)
-        <¢> get // httpMethod
+        <¢> get  // httpMethod
         %> parsePath(firstPathComponent, rest: rest)
         %> pathParam(idIso!)
         <% end
-      
+
     case .insert:
       // matches POST /{{ path }}
       return .case(/CRUDRoute<M, I, U>.insert)
-          <¢> post // httpMethod
-          %> parsePath(firstPathComponent, rest: rest)
-          %> jsonBody(I.self, encoder: jsonEncoder, decoder: jsonDecoder) // body
-          <% end
-      
+        <¢> post  // httpMethod
+        %> parsePath(firstPathComponent, rest: rest)
+        %> jsonBody(I.self, encoder: jsonEncoder, decoder: jsonDecoder)  // body
+        <% end
+
     case .update:
       // matches POST /{{ path }}/:id
       return .case(/CRUDRoute<M, I, U>.update)
-        <¢> post // httpMethod
+        <¢> post  // httpMethod
         %> parsePath(firstPathComponent, rest: rest)
-        %> pathParam(idIso!) // route path
-        <%> jsonBody(U.self) // body
+        %> pathParam(idIso!)  // route path
+        <%> jsonBody(U.self)  // body
         <% end
-      
+
     case .delete:
       // matches DELETE /{{ path }}/:id
       return .case(/CRUDRoute<M, I, U>.delete)
-        <¢> ApplicativeRouter.delete // httpMethod
+        <¢> ApplicativeRouter.delete  // httpMethod
         %> parsePath(firstPathComponent, rest: rest)
-        %> pathParam(idIso!) // route path
+        %> pathParam(idIso!)  // route path
         <% end
     }
   }
@@ -91,13 +91,13 @@ public func crudRouter<Model, Insert, Update>(
   encoder jsonEncoder: JSONEncoder = .init(),
   decoder jsonDecoder: JSONDecoder = .init()
 ) -> Router<CRUDRoute<Model, Insert, Update>>
-  where Model: Codable, Model: Identifiable, Update: Codable
-{
+where Model: Codable, Model: Identifiable, Update: Codable {
   let path = path.map(sanitizePath)
-  return routes
+  return
+    routes
     .map { $0.router(path: path, id: idIso, encoder: jsonEncoder, decoder: jsonDecoder) }
     .reduce(.empty, <|>)
-  
+
 }
 
 // Create a router with the supplied routes.
@@ -108,8 +108,7 @@ public func crudRouter<Model, Insert, Update>(
   encoder jsonEncoder: JSONEncoder = .init(),
   decoder jsonDecoder: JSONDecoder = .init()
 ) -> Router<CRUDRoute<Model, Insert, Update>>
-  where Model: Codable, Model: Identifiable, Update: Codable
-{
+where Model: Codable, Model: Identifiable, Update: Codable {
   crudRouter(
     path,
     routes: routes,

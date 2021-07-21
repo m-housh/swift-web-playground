@@ -41,27 +41,31 @@ private func loadEnvVars() -> EitherIO<Error, EnvVars> {
     .deletingLastPathComponent()
     .deletingLastPathComponent()
     .appendingPathComponent(".playground-env")
-  
+
   let decoder = JSONDecoder()
   let encoder = JSONEncoder()
-  
+
   let defaultEnvVars = EnvVars()
-  let defaultEnvVarsDict = (try? encoder.encode(defaultEnvVars))
+  let defaultEnvVarsDict =
+    (try? encoder.encode(defaultEnvVars))
     .flatMap { try? decoder.decode([String: String].self, from: $0) }
     ?? [:]
-  
-  let fileEnvDict = (try? Data(contentsOf: envFilePath))
+
+  let fileEnvDict =
+    (try? Data(contentsOf: envFilePath))
     .flatMap { try? decoder.decode([String: String].self, from: $0) }
     ?? [:]
-  
-  let envVarDict = defaultEnvVarsDict
+
+  let envVarDict =
+    defaultEnvVarsDict
     .merging(fileEnvDict, uniquingKeysWith: { $1 })
     .merging(ProcessInfo.processInfo.environment, uniquingKeysWith: { $1 })
-  
-  let envVars = (try? JSONSerialization.data(withJSONObject: envVarDict))
+
+  let envVars =
+    (try? JSONSerialization.data(withJSONObject: envVarDict))
     .flatMap { try? decoder.decode(EnvVars.self, from: $0) }
     ?? defaultEnvVars
-  
+
   return pure(envVars)
 }
 
@@ -91,7 +95,7 @@ extension EitherIO where A == Void, E == Error {
       run: IO {
         print(prefix)
         return .right(())
-    })
+      })
   }
 }
 

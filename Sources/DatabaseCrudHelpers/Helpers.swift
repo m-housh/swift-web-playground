@@ -14,7 +14,7 @@ extension EitherIO where E == Error {
       }
     )
   }
-  
+
   /// Return an `EitherIO` from a closure that can throw errors.
   public static func catching(_ work: @escaping () throws -> EitherIO) -> EitherIO {
     do {
@@ -51,7 +51,7 @@ extension EventLoopGroupConnectionPool where Source == PostgresConnectionSource 
 }
 
 extension SQLQueryFetcher {
-  
+
   public func first<D>(decoding: D.Type) -> EitherIO<Error, D?> where D: Decodable {
     .init(self.first(decoding: D.self))
   }

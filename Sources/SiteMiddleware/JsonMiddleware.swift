@@ -6,7 +6,7 @@ public func respondJson<A: Encodable>() -> (Conn<HeadersOpen, A>) -> IO<Conn<Res
   { conn in
     let encoder = JSONEncoder()
     let data = try! encoder.encode(conn.data)
-    
+
     return conn.map(const(data))
       |> writeHeader(.contentType(.json))
       >=> writeHeader(.contentLength(data.count))

@@ -28,28 +28,28 @@ extension DatabaseClient {
       insertUser: insert(to: Table.users, on: pool),
       migrate: { () -> EitherIO<Error, Void> in
         let database = pool.database(logger: Logger(label: "Postgres"))
-          
+
         return sequence([
           database.run(
             #"CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "public""#
           ),
           database.run(
             """
-              CREATE TABLE IF NOT EXISTS "users"(
-                "id" uuid DEFAULT uuid_generate_v1mc() PRIMARY KEY NOT NULL,
-                "name" character varying NOT NULL
-              )
-              """
+            CREATE TABLE IF NOT EXISTS "users"(
+              "id" uuid DEFAULT uuid_generate_v1mc() PRIMARY KEY NOT NULL,
+              "name" character varying NOT NULL
+            )
+            """
           ),
           database.run(
             """
-              CREATE TABLE IF NOT EXISTS "user_favorites"(
-                "id" uuid DEFAULT uuid_generate_v1mc() PRIMARY KEY NOT NULL,
-                "userId" uuid REFERENCES "users" ("id") NOT NULL,
-                "description" character varying NOT NULL
-              )
-              """
-          )
+            CREATE TABLE IF NOT EXISTS "user_favorites"(
+              "id" uuid DEFAULT uuid_generate_v1mc() PRIMARY KEY NOT NULL,
+              "userId" uuid REFERENCES "users" ("id") NOT NULL,
+              "description" character varying NOT NULL
+            )
+            """
+          ),
         ])
         .map(const(()))
 
@@ -57,20 +57,19 @@ extension DatabaseClient {
       shutdown: {
         .init(
           run: .init {
-          do {
-            try pool.syncShutdownGracefully()
-            return .right(())
-          } catch {
-            return .left(error)
-          }
-        })
+            do {
+              try pool.syncShutdownGracefully()
+              return .right(())
+            } catch {
+              return .left(error)
+            }
+          })
       },
       updateFavorite: update(table: Table.favorites, on: pool),
       updateUser: update(table: Table.users, on: pool)
     )
   }
-  
-  
+
   #if DEBUG
     public func resetForTesting(pool: EventLoopGroupConnectionPool<PostgresConnectionSource>) throws
     {
@@ -87,7 +86,7 @@ extension DatabaseClient {
 enum Table: CustomStringConvertible {
   case users
   case favorites
-  
+
   var tableName: String {
     switch self {
     case .users:
@@ -96,7 +95,7 @@ enum Table: CustomStringConvertible {
       return "user_favorites"
     }
   }
-  
+
   var description: String { tableName }
 }
 

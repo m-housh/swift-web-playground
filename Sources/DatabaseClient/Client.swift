@@ -1,13 +1,14 @@
 import Either
 import Foundation
+import SharedModels
+
 #if canImport(FoundationNetworking)
   import FoundationNetworking
 #endif
-import SharedModels
 
 /// Represents the database interactions.
 public struct DatabaseClient {
-  
+
   public var deleteFavorite: (UserFavorite.ID) -> EitherIO<Error, Void>
   public var deleteUser: (User.ID) -> EitherIO<Error, Void>
   public var fetchFavorites: (User.ID?) -> EitherIO<Error, [UserFavorite]>
@@ -20,7 +21,7 @@ public struct DatabaseClient {
   public var shutdown: () -> EitherIO<Error, Void>
   public var updateFavorite: (UpdateFavoriteRequest) -> EitherIO<Error, UserFavorite>
   public var updateUser: (UpdateUserRequest) -> EitherIO<Error, User>
-  
+
   public init(
     deleteFavorite: @escaping (UserFavorite.ID) -> EitherIO<Error, Void>,
     deleteUser: @escaping (User.ID) -> EitherIO<Error, Void>,
@@ -48,39 +49,39 @@ public struct DatabaseClient {
     self.updateFavorite = updateFavorite
     self.updateUser = updateUser
   }
-  
+
   public struct InsertFavoriteRequest: Codable, Equatable {
     public let userId: User.ID
     public let description: String
-    
+
     public init(userId: User.ID, description: String) {
       self.userId = userId
       self.description = description
     }
   }
-  
+
   public struct InsertUserRequest: Codable, Equatable {
     public let name: String
-    
+
     public init(name: String) {
       self.name = name
     }
   }
-  
+
   public struct UpdateFavoriteRequest: Codable, Equatable, Identifiable {
     public let id: UserFavorite.ID
     public let description: String?
-    
+
     public init(id: UserFavorite.ID, description: String?) {
       self.id = id
       self.description = description
     }
   }
-  
+
   public struct UpdateUserRequest: Codable, Equatable, Identifiable {
     public let id: User.ID
     public let name: String?
-    
+
     public init(
       id: User.ID,
       name: String?
