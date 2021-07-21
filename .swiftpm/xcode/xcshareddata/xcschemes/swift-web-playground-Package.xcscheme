@@ -140,9 +140,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CrudRouter"
-               BuildableName = "CrudRouter"
-               BlueprintName = "CrudRouter"
+               BlueprintIdentifier = "ServerRouter"
+               BuildableName = "ServerRouter"
+               BlueprintName = "ServerRouter"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -154,9 +154,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ServerRouter"
-               BuildableName = "ServerRouter"
-               BlueprintName = "ServerRouter"
+               BlueprintIdentifier = "CrudRouter"
+               BuildableName = "CrudRouter"
+               BlueprintName = "CrudRouter"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
