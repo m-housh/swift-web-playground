@@ -59,7 +59,7 @@ public func router(
 ) -> Router<ServerRoute> {
 
   let userPath: NonEmptyArray<String> = pathPrefix != nil ?
-    pathPrefix! + ["users"] : .init(rawValue: ["users"])!
+    pathPrefix!.appending("users") : .init(rawValue: ["users"])!
   
   let userRouter = ServerRoute.UserRouter.default(
     path: userPath,
@@ -69,7 +69,7 @@ public func router(
   .router()
   
   let favoritePath: NonEmptyArray<String> = pathPrefix != nil ?
-    pathPrefix! + ["favorites"] : .init(rawValue: ["favorites"])!
+    pathPrefix!.appending("favorites") : .init(rawValue: ["favorites"])!
   
   let defaultFavoriteRouter = ServerRoute.FavoriteRouter.default(
     path: favoritePath,
@@ -104,3 +104,12 @@ public func router(
 
 public typealias FavoriteRouter = Router<ServerRoute.FavoriteRoute>
 public typealias UserRouter = Router<ServerRoute.UserRoute>
+
+extension NonEmpty where Collection: RangeReplaceableCollection {
+  
+  func appending(_ element: Element) -> Self {
+    var elements = self.rawValue
+    elements.append(element)
+    return .init(rawValue: elements)!
+  }
+}
