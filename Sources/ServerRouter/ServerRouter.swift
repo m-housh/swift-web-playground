@@ -11,99 +11,92 @@ import SharedModels
   import FoundationNetworking
 #endif
 
-public enum ServerRoute: Equatable {
-
-  public typealias FavoriteRouter = BasicCrudRouter<
-    UserFavorite,
-    DatabaseClient.InsertFavoriteRequest,
-    UpdateFavoriteRequest
-  >
-
-  public typealias UserRouter = BasicCrudRouter<
-    User,
-    DatabaseClient.InsertUserRequest,
-    UpdateUserRequest
-  >
-
-  public typealias UserRoute = UserRouter.Route
-
-  case users(UserRoute)
-  case favorites(FavoriteRoute)
-
-  public enum FavoriteRoute: Equatable {
-    case `default`(FavoriteRouter.Route)
-    case fetch(User.ID?)
-  }
-
-  public struct UpdateUserRequest: Equatable, Codable {
-    public var name: String?
-
-    public init(name: String?) {
-      self.name = name
-    }
-  }
-
-  public struct UpdateFavoriteRequest: Equatable, Codable {
-    public var description: String?
-
-    public init(description: String?) {
-      self.description = description
-    }
-  }
-}
-
 public func router(
   pathPrefix: NonEmptyArray<String>? = nil,
   decoder: JSONDecoder,
   encoder: JSONEncoder
-) -> Router<ServerRoute> {
+) -> Router<ApiRoute> {
 
   let userPath: NonEmptyArray<String> =
-    pathPrefix != nil ? pathPrefix!.appending("users") : .init("users")
+    pathPrefix != nil
+    ? pathPrefix!.appending("users")
+    : .init("users")
 
-  let userRouter = ServerRoute.UserRouter.default(
-    path: userPath,
-    decoder: decoder,
-    encoder: encoder
-  )
-  .router()
+  let userRouter = makeUserRouter(path: userPath, decoder: decoder, encoder: encoder)
 
   let favoritePath: NonEmptyArray<String> =
-    pathPrefix != nil ? pathPrefix!.appending("favorites") : .init("favorites")
+    pathPrefix != nil
+    ? pathPrefix!.appending("favorites")
+    : .init("favorites")
 
-  let defaultFavoriteRouter = ServerRoute.FavoriteRouter.default(
-    path: favoritePath,
-    decoder: decoder,
-    encoder: encoder
-  )
-  .router(for: [.delete, .fetchOne, .insert, .update])
+  let favoriteRouter = makeFavoriteRouter(path: favoritePath, decoder: decoder, encoder: encoder)
 
-  let favoriteRouter: Router<ServerRoute.FavoriteRoute> = [
-
-    CrudRoute.fetch(
-      /ServerRoute.FavoriteRoute.fetch,
-      path: favoritePath,
-      param: ("userId", opt(.uuid))
-    ),
-
-    .case(/ServerRoute.FavoriteRoute.default)
-      <¢> defaultFavoriteRouter,
-
-  ].reduce(.empty, <|>)
-
-  let routers: [Router<ServerRoute>] = [
-    PartialIso.case(/ServerRoute.users)
+  let routers: [Router<ApiRoute>] = [
+    .case(/ApiRoute.users)
       <¢> userRouter,
 
-    PartialIso.case(/ServerRoute.favorites)
+    .case(/ApiRoute.favorites)
       <¢> favoriteRouter,
   ]
 
   return routers.reduce(.empty, <|>)
 }
 
-public typealias FavoriteRouter = Router<ServerRoute.FavoriteRoute>
-public typealias UserRouter = Router<ServerRoute.UserRoute>
+private func makeUserRouter(
+  path: NonEmptyArray<String>,
+  decoder: JSONDecoder,
+  encoder: JSONEncoder
+) -> Router<ApiRoute.UsersRoute> {
+  CrudRouter(
+    delete: .delete(/ApiRoute.UsersRoute.delete, path: path, idIso: .uuid),
+    fetch: .fetch(/ApiRoute.UsersRoute.fetch, path: path),
+    fetchOne: .fetchId(/ApiRoute.UsersRoute.fetchId(id:), path: path, idIso: .uuid),
+    insert: .insert(
+      /ApiRoute.UsersRoute.insert,
+      path: path,
+      decoder: decoder,
+      encoder: encoder
+    ),
+    update: .update(
+      /ApiRoute.UsersRoute.update,
+      path: path,
+      idIso: .uuid,
+      decoder: decoder,
+      encoder: encoder
+    )
+  )
+  .router()
+}
+
+private func makeFavoriteRouter(
+  path: NonEmptyArray<String>,
+  decoder: JSONDecoder,
+  encoder: JSONEncoder
+) -> Router<ApiRoute.FavoritesRoute> {
+  CrudRouter(
+    delete: .delete(/ApiRoute.FavoritesRoute.delete, path: path, idIso: .uuid),
+    fetch: .fetch(
+      /ApiRoute.FavoritesRoute.fetch(userId:),
+      path: path,
+      param: (key: "userId", iso: opt(.uuid))
+    ),
+    fetchOne: .fetchId(/ApiRoute.FavoritesRoute.fetchId(id:), path: path, idIso: .uuid),
+    insert: .insert(
+      /ApiRoute.FavoritesRoute.insert,
+      path: path,
+      decoder: decoder,
+      encoder: encoder
+    ),
+    update: .update(
+      /ApiRoute.FavoritesRoute.update,
+      path: path,
+      idIso: .uuid,
+      decoder: decoder,
+      encoder: encoder
+    )
+  )
+  .router()
+}
 
 extension NonEmpty where Collection == [String] {
 

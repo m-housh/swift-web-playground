@@ -16,7 +16,7 @@ public struct ServerEnvironment {
   public var envVars: EnvVars
 
   /// The router that knows how to parse incoming requests to types that we can work with to create responses.
-  public var router: Router<ServerRoute>
+  public var router: Router<ApiRoute>
 
   /// Create a new `ServerEnvironment`.
   ///
@@ -27,7 +27,7 @@ public struct ServerEnvironment {
   public init(
     database: DatabaseClient,
     envVars: EnvVars,
-    router: Router<ServerRoute>
+    router: Router<ApiRoute>
   ) {
     self.database = database
     self.envVars = envVars

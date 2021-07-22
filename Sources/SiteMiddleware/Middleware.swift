@@ -41,7 +41,7 @@ public func siteMiddleware(
 private func apiMiddleware(
   _ environment: ServerEnvironment,
   _ logger: Logger?
-) -> Middleware<StatusLineOpen, ResponseEnded, ServerRoute, Data> {
+) -> Middleware<StatusLineOpen, ResponseEnded, ApiRoute, Data> {
   { conn in
     let route = conn.data
 
@@ -60,35 +60,35 @@ private func apiMiddleware(
         .run
         .flatMap(respond(on: conn))
 
-    case let .favorites(.default(.fetchOne(id: id))):
+    case let .favorites(.fetchId(id: id)):
       logger?.debug("fetching favorites.id: \(id)")
       return environment.database
         .fetchFavorite(id)
         .run
         .flatMap(respond(on: conn))
 
-    case let .users(.fetchOne(id: id)):
+    case let .users(.fetchId(id: id)):
       logger?.debug("fetching user.id: \(id)")
       return environment.database
         .fetchUser(id)
         .run
         .flatMap(respond(on: conn))
 
-    case let .favorites(.default(.insert(model))):
-      logger?.debug("inserting favorites: \(model)")
+    case let .favorites(.insert(request)):
+      logger?.debug("inserting favorites: \(request)")
       return environment.database
-        .insertFavorite(model)
+        .insertFavorite(.init(userId: request.userId, description: request.description))
         .run
         .flatMap(respond(on: conn))
 
-    case let .users(.insert(model)):
-      logger?.debug("inserting user: \(model)")
+    case let .users(.insert(request)):
+      logger?.debug("inserting user: \(request)")
       return environment.database
-        .insertUser(model)
+        .insertUser(.init(name: request.name))
         .run
         .flatMap(respond(on: conn))
 
-    case let .favorites(.default(.update(id: id, update: update))):
+    case let .favorites(.update(id: id, update: update)):
       logger?.debug("updating favorite.id: \(id)")
       logger?.debug("with updates: \(update)")
       return environment.database
@@ -104,7 +104,7 @@ private func apiMiddleware(
         .run
         .flatMap(respond(on: conn))
 
-    case let .favorites(.default(.delete(id: id))):
+    case let .favorites(.delete(id: id)):
       logger?.debug("deleting favorite.id: \(id)")
       return environment.database
         .deleteFavorite(id)
@@ -117,12 +117,6 @@ private func apiMiddleware(
         .deleteUser(id)
         .run
         .flatMap(respond(on: conn))
-
-    case .favorites(.default(.fetch)):
-      logger?.debug("WE SHOULD NOT HIT THIS ROUTE!")
-      return conn.map(const(()))
-        |> writeStatus(.internalServerError)
-        >=> respond(text: "Invalid route")
     }
   }
 }
@@ -132,7 +126,7 @@ private func apiMiddleware(
 /// - Parameters:
 ///   - conn: The incoming connection used to respond.
 private func respond<A>(
-  on conn: Conn<StatusLineOpen, ServerRoute>
+  on conn: Conn<StatusLineOpen, ApiRoute>
 ) -> (Either<Error, A>) -> IO<Conn<ResponseEnded, Data>>
 where A: Encodable {
   { (eitherErrorOrOther: Either<Error, A>) -> IO<Conn<ResponseEnded, Data>> in
@@ -155,7 +149,7 @@ where A: Encodable {
 /// - Parameters:
 ///   - conn: The incoming connection used to respond.
 private func respond(
-  on conn: Conn<StatusLineOpen, ServerRoute>
+  on conn: Conn<StatusLineOpen, ApiRoute>
 ) -> (Either<Error, Void>) -> IO<Conn<ResponseEnded, Data>> {
   { (eitherErrorOrOther: Either<Error, Void>) -> IO<Conn<ResponseEnded, Data>> in
     switch eitherErrorOrOther {

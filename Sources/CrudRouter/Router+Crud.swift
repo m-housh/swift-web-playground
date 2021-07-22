@@ -4,8 +4,9 @@ import Foundation
 import NonEmpty
 import Prelude
 
-/// A namespace for creating routers that can handle CRUD operations.
-public enum CrudRoute {
+/// Extends the router type with default crud operations. And is convenient with building a router that combines multiple
+/// routers.
+extension Router {
 
   /// Create a router that matches on  DELETE /{{ path }}/:id
   ///
@@ -13,11 +14,11 @@ public enum CrudRoute {
   ///   - casePath: The case path used for the route.
   ///   - pathComponents: The path components used in the route.
   ///   - idIso: The partial isomorphisim used to parse the `ID`.
-  public static func delete<Route, ID>(
-    _ casePath: CasePath<Route, ID>,
+  public static func delete<ID>(
+    _ casePath: CasePath<A, ID>,
     path pathComponents: NonEmptyArray<String>,
     idIso: PartialIso<String, ID>
-  ) -> Router<Route> {
+  ) -> Router {
     .case(casePath)
       <¢> ApplicativeRouter.delete
       %> parsePath(pathComponents)
@@ -30,10 +31,10 @@ public enum CrudRoute {
   /// - Parameters:
   ///   - casePath: The case path used for the route.
   ///   - pathComponents: The path components used in the route.
-  public static func fetch<Route>(
-    _ casePath: CasePath<Route, Void>,
+  public static func fetch(
+    _ casePath: CasePath<A, Void>,
     path pathComponents: NonEmptyArray<String>
-  ) -> Router<Route> {
+  ) -> Router {
     .case(casePath)
       <¢> get  // httpMethod
       %> parsePath(pathComponents)
@@ -48,11 +49,11 @@ public enum CrudRoute {
   ///   - casePath: The case path used for the route.
   ///   - pathComponents: The path components used in the route.
   ///   - param: The key and partial isomorphisim used to parse the query parameter.
-  public static func fetch<Route, Param>(
-    _ casePath: CasePath<Route, Param>,
+  public static func fetch<Param>(
+    _ casePath: CasePath<A, Param>,
     path pathComponents: NonEmptyArray<String>,
     param: (key: String, iso: PartialIso<String?, Param>)
-  ) -> Router<Route> {
+  ) -> Router {
     .case(casePath)
       <¢> get  // httpMethod
       %> parsePath(pathComponents)
@@ -67,10 +68,11 @@ public enum CrudRoute {
   /// - Parameters:
   ///   - casePath: The case path used for the route.
   ///   - pathComponents: The path components used in the route.
-  public static func fetch<Route, Param>(
-    _ casePath: CasePath<Route, Param>,
+  public static func fetch<Param>(
+    _ casePath: CasePath<A, Param>,
     path pathComponents: NonEmptyArray<String>
-  ) -> Router<Route> where Param: Codable {
+  ) -> Router
+  where Param: Codable {
     .case(casePath)
       <¢> get  // httpMethod
       %> parsePath(pathComponents)
@@ -87,19 +89,19 @@ public enum CrudRoute {
   ///   - pathComponents: The path components used in the route.
   ///   - aParam: The key and partial isomorphisim used to parse the first query parameter.
   ///   - bParam: The key and partial isomorphisim used to parse the second query parameter.
-  public static func fetch<Route, A, B>(
-    _ casePath: CasePath<Route, (A, B)>,
-    path pathComponents: NonEmptyArray<String>,
-    param aParam: (key: String, iso: PartialIso<String?, A>),
-    param bParam: (key: String, iso: PartialIso<String?, B>)
-  ) -> Router<Route> {
-    .case(casePath)
-      <¢> get  // httpMethod
-      %> parsePath(pathComponents)
-      %> queryParam(aParam.key, aParam.iso)
-      <%> queryParam(bParam.key, bParam.iso)
-      <% end
-  }
+  //  public static func fetch<B, C>(
+  //    _ casePath: CasePath<A, (B, C)>,
+  //    path pathComponents: NonEmptyArray<String>,
+  //    param aParam: (key: String, iso: PartialIso<String?, B>),
+  //    param bParam: (key: String, iso: PartialIso<String?, C>)
+  //  ) -> Router {
+  //    .case(casePath)
+  //      <¢> get  // httpMethod
+  //      %> parsePath(pathComponents)
+  //      %> queryParam(aParam.key, aParam.iso)
+  //      <%> queryParam(bParam.key, bParam.iso)
+  //      <% end
+  //  }
 
   /// Create a router that matches on  GET /{{ path }}/:id
   ///
@@ -107,11 +109,11 @@ public enum CrudRoute {
   ///   - casePath: The case path used for the route.
   ///   - pathComponents: The path components used in the route.
   ///   - idIso: The partial isomorphisim used to parse the `ID`.
-  public static func fetchId<Route, ID>(
-    _ casePath: CasePath<Route, ID>,
+  public static func fetchId<ID>(
+    _ casePath: CasePath<A, ID>,
     path pathComponents: NonEmptyArray<String>,
     idIso: PartialIso<String, ID>
-  ) -> Router<Route> {
+  ) -> Router {
     .case(casePath)
       <¢> get  // httpMethod
       %> parsePath(pathComponents)
@@ -126,12 +128,13 @@ public enum CrudRoute {
   ///   - pathComponents: The path components used in the route.
   ///   - decoder: The json decoder used by the router.
   ///   - encoder: The json encoder used by the router.
-  public static func insert<Route, Insert>(
-    _ casePath: CasePath<Route, Insert>,
+  public static func insert<Insert>(
+    _ casePath: CasePath<A, Insert>,
     path pathComponents: NonEmptyArray<String>,
     decoder: JSONDecoder = .init(),
     encoder: JSONEncoder = .init()
-  ) -> Router<Route> where Insert: Codable {
+  ) -> Router
+  where Insert: Codable {
     .case(casePath)
       <¢> post  // httpMethod
       %> parsePath(pathComponents)
@@ -147,13 +150,14 @@ public enum CrudRoute {
   ///   - idIso: The partial isomorphisim used to parse the `ID`.
   ///   - decoder: The json decoder used by the router.
   ///   - encoder: The json encoder used by the router.
-  public static func update<Route, ID, Update>(
-    _ casePath: CasePath<Route, (ID, Update)>,
+  public static func update<ID, Update>(
+    _ casePath: CasePath<A, (ID, Update)>,
     path pathComponents: NonEmptyArray<String>,
     idIso: PartialIso<String, ID>,
     decoder: JSONDecoder = .init(),
     encoder: JSONEncoder = .init()
-  ) -> Router<Route> where Update: Codable {
+  ) -> Router
+  where Update: Codable {
     .case(casePath)
       <¢> post  // httpMethod
       %> parsePath(pathComponents)
@@ -161,4 +165,33 @@ public enum CrudRoute {
       <%> jsonBody(Update.self, encoder: encoder, decoder: decoder)  // body
       <% end
   }
+}
+
+/// Strips any leading "/" from the path.
+///
+/// - Parameters:
+///   - path: The path to sanitize.
+private func sanitizePath(_ path: String) -> String {
+  if path.starts(with: "/") {
+    // call ourself recursively until all leading "/" are removed.
+    return sanitizePath(String(path.dropFirst()))
+  }
+  return path
+}
+
+/// Sanitize and parse the path components used in routes.
+///
+/// - Parameters:
+///   - first: The first path component to sanitize and parse.
+///   - rest: The other path components to sanitize and parse.
+private func parsePath(_ first: String, rest: ArraySlice<String>) -> Router<Void> {
+  rest.reduce(lit(sanitizePath(first)), { $0 %> lit(sanitizePath($1)) })
+}
+
+/// Sanitize and parse the path components used in routes.
+///
+/// - Parameters:
+///   - pathComponents: The path components to sanitize and parse.
+private func parsePath(_ pathComponents: NonEmptyArray<String>) -> Router<Void> {
+  return parsePath(pathComponents.first, rest: pathComponents.suffix(from: 1))
 }
