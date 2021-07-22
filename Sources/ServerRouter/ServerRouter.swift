@@ -105,9 +105,9 @@ public func router(
 public typealias FavoriteRouter = Router<ServerRoute.FavoriteRoute>
 public typealias UserRouter = Router<ServerRoute.UserRoute>
 
-extension NonEmpty where Collection: RangeReplaceableCollection {
+extension NonEmpty where Collection == Array<String> {
   
-  func appending(_ element: Element) -> Self {
+  func appending(_ element: String) -> Self {
     var elements = self.rawValue
     elements.append(element)
     return .init(elements)!
