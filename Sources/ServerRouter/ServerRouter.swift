@@ -58,7 +58,9 @@ public func router(
   encoder: JSONEncoder
 ) -> Router<ServerRoute> {
 
-  let userPath = pathPrefix != nil ? pathPrefix! + ["users"] : .init(["users"])!
+  let userPath: NonEmptyArray<String> = pathPrefix != nil ?
+    pathPrefix! + ["users"] : .init(["users"])!
+  
   let userRouter = ServerRoute.UserRouter.default(
     path: userPath,
     decoder: decoder,
@@ -66,7 +68,9 @@ public func router(
   )
   .router()
   
-  let favoritePath = pathPrefix != nil ? pathPrefix! + ["favorites"] : .init(["favorites"])!
+  let favoritePath: NonEmptyArray<String> = pathPrefix != nil ?
+    pathPrefix! + ["favorites"] : .init(["favorites"])!
+  
   let defaultFavoriteRouter = ServerRoute.FavoriteRouter.default(
     path: favoritePath,
     decoder: decoder,

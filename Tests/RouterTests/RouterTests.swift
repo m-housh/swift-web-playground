@@ -14,12 +14,16 @@ import XCTest
 
 final class RouterTests: XCTestCase {
 
-  let router = ServerRouter.router(decoder: JSONDecoder(), encoder: JSONEncoder())
+  let router = ServerRouter.router(
+    pathPrefix: .init(["api"])!,
+    decoder: JSONDecoder(),
+    encoder: JSONEncoder()
+  )
 
   func testFavoritesFetchRoute() {
     let route = ServerRoute.favorites(.fetch(nil))
     let request =
-      URLRequest(url: URL(string: "favorites")!)
+      URLRequest(url: URL(string: "api/favorites")!)
       |> \.httpMethod .~ "get"
 
     XCTAssertEqual(route, router.match(request: request))
@@ -31,7 +35,7 @@ final class RouterTests: XCTestCase {
     let route = ServerRoute.favorites(.fetch(userId))
     
     let request =
-      URLRequest(url: URL(string: "favorites?userId=\(userId)")!)
+      URLRequest(url: URL(string: "api/favorites?userId=\(userId)")!)
       |> \.httpMethod .~ "get"
 
     XCTAssertEqual(route, router.match(request: request))
@@ -41,19 +45,19 @@ final class RouterTests: XCTestCase {
   func testUsersFetchRoute() {
     let route = ServerRoute.users(.fetch)
     let request =
-      URLRequest(url: URL(string: "users")!)
+      URLRequest(url: URL(string: "api/users")!)
       |> \.httpMethod .~ "get"
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertEqual(request, router.request(for: ServerRoute.users(.fetch)))
-    XCTAssertEqual("users", router.templateUrl(for: route)?.absoluteString)
+    XCTAssertEqual("api/users", router.templateUrl(for: route)?.absoluteString)
   }
 
   func testFavoritesFetchOneRoute() {
     let id = UUID()
     let route = ServerRoute.favorites(.default(.fetchOne(id: id)))
     let request =
-      URLRequest(url: URL(string: "favorites/\(id)")!)
+      URLRequest(url: URL(string: "api/favorites/\(id)")!)
       |> \.httpMethod .~ "get"
 
     XCTAssertEqual(route, router.match(request: request))
@@ -64,7 +68,7 @@ final class RouterTests: XCTestCase {
     let id = UUID()
     let route = ServerRoute.users(.fetchOne(id: id))
     let request =
-      URLRequest(url: URL(string: "users/\(id)")!)
+      URLRequest(url: URL(string: "api/users/\(id)")!)
       |> \.httpMethod .~ "get"
 
     XCTAssertEqual(route, router.match(request: request))
@@ -76,7 +80,7 @@ final class RouterTests: XCTestCase {
     let favorite = DatabaseClient.InsertFavoriteRequest(userId: userId, description: "blob")
     let route = ServerRoute.favorites(.default(.insert(favorite)))
     let request =
-      URLRequest(url: URL(string: "favorites")!)
+      URLRequest(url: URL(string: "api/favorites")!)
       |> \.httpMethod .~ "post"
       |> \.httpBody .~ (try? JSONEncoder().encode(favorite))
 
@@ -89,7 +93,7 @@ final class RouterTests: XCTestCase {
     let user = DatabaseClient.InsertUserRequest(name: "blob")
     let route = ServerRoute.users(.insert(user))
     let request =
-      URLRequest(url: URL(string: "users")!)
+      URLRequest(url: URL(string: "api/users")!)
       |> \.httpMethod .~ "post"
       |> \.httpBody .~ (try? JSONEncoder().encode(user))
 
@@ -103,7 +107,7 @@ final class RouterTests: XCTestCase {
     let update = ServerRoute.UpdateFavoriteRequest(description: "blob")
     let route = ServerRoute.favorites(.default(.update(id: id, update: update)))
     let request =
-      URLRequest(url: URL(string: "favorites/\(id)")!)
+      URLRequest(url: URL(string: "api/favorites/\(id)")!)
       |> \.httpMethod .~ "post"
       |> \.httpBody .~ (try? JSONEncoder().encode(update))
 
@@ -117,7 +121,7 @@ final class RouterTests: XCTestCase {
     let update = ServerRoute.UpdateUserRequest(name: "blob")
     let route = ServerRoute.users(.update(id: id, update: update))
     let request =
-      URLRequest(url: URL(string: "users/\(id)")!)
+      URLRequest(url: URL(string: "api/users/\(id)")!)
       |> \.httpMethod .~ "post"
       |> \.httpBody .~ (try? JSONEncoder().encode(update))
 
@@ -130,7 +134,7 @@ final class RouterTests: XCTestCase {
     let id = UUID()
     let route = ServerRoute.favorites(.default(.delete(id: id)))
     let request =
-      URLRequest(url: URL(string: "favorites/\(id)")!)
+      URLRequest(url: URL(string: "api/favorites/\(id)")!)
       |> \.httpMethod .~ "delete"
 
     XCTAssertEqual(route, router.match(request: request))
@@ -141,7 +145,7 @@ final class RouterTests: XCTestCase {
     let id = UUID()
     let route = ServerRoute.users(.delete(id: id))
     let request =
-      URLRequest(url: URL(string: "users/\(id)")!)
+      URLRequest(url: URL(string: "api/users/\(id)")!)
       |> \.httpMethod .~ "delete"
 
     XCTAssertEqual(route, router.match(request: request))
