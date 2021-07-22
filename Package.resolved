@@ -11,7 +11,7 @@
         }
       },
       {
-        "package": "Cryptor",
+        "package": "BlueCryptor",
         "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
         "state": {
           "branch": null,
@@ -65,7 +65,7 @@
         }
       },
       {
-        "package": "Html",
+        "package": "swift-html",
         "repositoryURL": "https://github.com/pointfreeco/swift-html",
         "state": {
           "branch": "3a1b7e4",
@@ -119,7 +119,16 @@
         }
       },
       {
-        "package": "Prelude",
+        "package": "swift-nonempty",
+        "repositoryURL": "https://github.com/pointfreeco/swift-nonempty.git",
+        "state": {
+          "branch": null,
+          "revision": "a3dbd05f2b57cb0ea1b8138a720fc28a1629ca06",
+          "version": "0.3.1"
+        }
+      },
+      {
+        "package": "swift-prelude",
         "repositoryURL": "https://github.com/pointfreeco/swift-prelude.git",
         "state": {
           "branch": "9240a1f",
@@ -128,7 +137,7 @@
         }
       },
       {
-        "package": "SnapshotTesting",
+        "package": "swift-snapshot-testing",
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing.git",
         "state": {
           "branch": null,
@@ -137,7 +146,7 @@
         }
       },
       {
-        "package": "Web",
+        "package": "swift-web",
         "repositoryURL": "https://github.com/pointfreeco/swift-web.git",
         "state": {
           "branch": "616f365",

@@ -3,31 +3,28 @@ import CasePaths
 import CrudRouter
 import DatabaseClient
 import Foundation
+import NonEmpty
 import Prelude
 import SharedModels
 
 #if canImport(FoundationNetworking)
   import FoundationNetworking
-  import SharedModels
-  import DatabaseClient
 #endif
 
 public enum ServerRoute: Equatable {
   
-  public typealias FavoriteRouter = CrudRouter<
+  public typealias FavoriteRouter = BasicCrudRouter<
     UserFavorite,
     DatabaseClient.InsertFavoriteRequest,
     UpdateFavoriteRequest
   >
   
-  public typealias UserRouter = CrudRouter<
+  public typealias UserRouter = BasicCrudRouter<
     User,
     DatabaseClient.InsertUserRequest,
     UpdateUserRequest
   >
-
-//  public typealias FavoriteRoute = FavoriteRouter.Route
-
+  
   public typealias UserRoute = UserRouter.Route
 
   case users(UserRoute)
@@ -56,19 +53,22 @@ public enum ServerRoute: Equatable {
 }
 
 public func router(
+  pathPrefix: NonEmptyArray<String>? = nil,
   decoder: JSONDecoder,
   encoder: JSONEncoder
 ) -> Router<ServerRoute> {
 
+  let userPath = pathPrefix != nil ? pathPrefix! + ["users"] : .init(["users"])!
   let userRouter = ServerRoute.UserRouter.default(
-    path: ["users"],
+    path: userPath,
     decoder: decoder,
     encoder: encoder
   )
   .router()
   
+  let favoritePath = pathPrefix != nil ? pathPrefix! + ["favorites"] : .init(["favorites"])!
   let defaultFavoriteRouter = ServerRoute.FavoriteRouter.default(
-    path: ["favorites"],
+    path: favoritePath,
     decoder: decoder,
     encoder: encoder
   )
@@ -76,25 +76,16 @@ public func router(
   
   let favoriteRouter: Router<ServerRoute.FavoriteRoute> = [
     
-    .case(/ServerRoute.FavoriteRoute.fetch)
-      <¢> get
-      %> lit("favorites") %> queryParam("userId", opt(.uuid))
-      <% end,
+    CrudRoute.fetch(
+      /ServerRoute.FavoriteRoute.fetch,
+       path: favoritePath,
+       param: ("userId", opt(.uuid))
+    ),
     
     .case(/ServerRoute.FavoriteRoute.default)
       <¢> defaultFavoriteRouter
     
   ].reduce(.empty, <|>)
-  
-//  var favoriteRouter = ServerRoute.FavoriteRouter(
-//    fetch: .case(/ServerRoute.FavoriteRoute.fetch)
-//      <¢> get  // httpMethod
-//      %> lit("favorites") %> queryParam("userId", opt(.uuid))
-//      <% end
-//  ).router(for: [.fetchOne])
-//
-  
-//  let favoriteRouter = FavoriteRouter("favorites", encoder: encoder, decoder: decoder)
 
   let routers: [Router<ServerRoute>] = [
     PartialIso.case(/ServerRoute.users)
@@ -109,46 +100,3 @@ public func router(
 
 public typealias FavoriteRouter = Router<ServerRoute.FavoriteRoute>
 public typealias UserRouter = Router<ServerRoute.UserRoute>
-
-//extension FavoriteRouter {
-//
-//  init(
-//    _ path: String...,
-//    encoder jsonEncoder: JSONEncoder = .init(),
-//    decoder jsonDecoder: JSONDecoder = .init()
-//  ) {
-//    self = crudRouter(
-//      path,
-//      id: .uuid,
-//      encoder: jsonEncoder,
-//      decoder: jsonDecoder
-//    )
-//  }
-//}
-
-//extension UserRouter {
-//
-//  init(
-//    _ path: String...,
-//    encoder jsonEncoder: JSONEncoder = .init(),
-//    decoder jsonDecoder: JSONDecoder = .init()
-//  ) {
-//    self = crudRouter(
-//      path,
-//      id: .uuid,
-//      encoder: jsonEncoder,
-//      decoder: jsonDecoder
-//    )
-//  }
-//}
-
-//private func sanitizePath(_ path: String) -> String {
-//  if path.starts(with: "/") {
-//    return String(path.dropFirst())
-//  }
-//  return path
-//}
-//
-//private func parsePath(_ first: String, rest: ArraySlice<String>) -> Router<Void> {
-//  rest.reduce(lit(first), { $0 %> lit($1) })
-//}

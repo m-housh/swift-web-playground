@@ -28,6 +28,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "0.5.0"),
     .package(url: "https://github.com/vapor/postgres-kit.git", from: "2.3.0"),
     .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
+    .package(url: "https://github.com/pointfreeco/swift-nonempty.git", from: "0.3.1"),
   ],
   targets: [
     .target(
@@ -35,6 +36,7 @@ let package = Package(
       dependencies: [
         .product(name: "ApplicativeRouter", package: "Web"),
         .product(name: "CasePaths", package: "swift-case-paths"),
+        .product(name: "NonEmpty", package: "swift-nonempty"),
       ]),
     .target(
       name: "DatabaseClient",

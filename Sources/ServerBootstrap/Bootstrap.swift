@@ -83,7 +83,11 @@ private func loadEnvironment(
             on: eventLoopGroup)
         ),
         envVars: envVars,
-        router: router(decoder: JSONDecoder(), encoder: JSONEncoder())
+        router: router(
+          pathPrefix: .init(["api"]),
+          decoder: JSONDecoder(),
+          encoder: JSONEncoder()
+        )
       )
     )
   }
