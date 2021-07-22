@@ -84,7 +84,7 @@ private func loadEnvironment(
         ),
         envVars: envVars,
         router: router(
-          pathPrefix: .init(["api"]),
+          pathPrefix: .init("api"),
           decoder: JSONDecoder(),
           encoder: JSONEncoder()
         )
