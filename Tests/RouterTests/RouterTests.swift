@@ -15,7 +15,7 @@ import XCTest
 final class RouterTests: XCTestCase {
 
   let router = ServerRouter.router(
-    pathPrefix: .init(["api"])!,
+    pathPrefix: .init("api"),
     decoder: JSONDecoder(),
     encoder: JSONEncoder()
   )
