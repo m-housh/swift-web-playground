@@ -10,13 +10,13 @@ public struct EnvVars: Codable {
 
   /// The application environment, i.e. (development / testing, etc.)
   public var appEnv: AppEnv
-  
+
   /// The base url, used by the router to create / parse urls.
   public var baseUrl: URL
-  
+
   /// The database url used to connect to the database.
   public var databaseUrl: String
-  
+
   /// The port the application is running on.
   public var port: String
 

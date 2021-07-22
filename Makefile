@@ -36,7 +36,6 @@ env-example:
 format:
 	@docker run \
 		--rm \
-		-it \
 		--workdir "/work" \
 		--volume "$(PWD):/work" \
 		--platform linux/amd64 \
@@ -44,4 +43,5 @@ format:
 		format \
 		--in-place \
 		--recursive \
-		.
+		./Package.swift \
+		./Sources/

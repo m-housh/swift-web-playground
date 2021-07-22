@@ -17,24 +17,23 @@ public enum CRUDRouteType: CaseIterable, Equatable {
 /// A basic crud router that can handle crud routes for a model.  It allows for custom insert and update types.
 ///
 public struct BasicCrudRouter<Model, Insert, Update>
-where Model: Identifiable, Insert: Codable, Update: Codable
-{
-  
+where Model: Identifiable, Insert: Codable, Update: Codable {
+
   /// The router to use for the delete route.
   public var delete: Router<Route>?
-  
+
   /// The router to use for the fetch route.
   public var fetch: Router<Route>?
-  
+
   /// The router to use for the fetch by id route.
   public var fetchOne: Router<Route>?
-  
+
   /// The router to use for the insert route.
   public var insert: Router<Route>?
-  
+
   /// The router to use for the update route.
   public var update: Router<Route>?
-  
+
   /// Create a new `BasicCrudRouter` with the given routers.
   ///
   /// - Parameters:
@@ -56,7 +55,7 @@ where Model: Identifiable, Insert: Codable, Update: Codable
     self.insert = insert
     self.update = update
   }
-  
+
   /// The routes that we can take / handle.
   public enum Route {
     case delete(id: Model.ID)
@@ -65,7 +64,7 @@ where Model: Identifiable, Insert: Codable, Update: Codable
     case insert(Insert)
     case update(id: Model.ID, update: Update)
   }
-  
+
   /// Parses the router for the given `CRUDRouteType`
   ///
   /// - Parameters:
@@ -84,7 +83,7 @@ where Model: Identifiable, Insert: Codable, Update: Codable
       return self.update
     }
   }
-  
+
   /// Creates the actual router, defaults to using all the routes, but you can disable certain routes by not including them
   /// in the routes parameter when calling this method.
   ///
@@ -97,10 +96,10 @@ where Model: Identifiable, Insert: Codable, Update: Codable
 }
 
 extension BasicCrudRouter.Route: Equatable
-where Model.ID: Equatable, Model.ID: Equatable, Insert: Equatable, Update: Equatable { }
+where Model.ID: Equatable, Model.ID: Equatable, Insert: Equatable, Update: Equatable {}
 
 extension BasicCrudRouter {
-  
+
   /// Create a new `BasicCrudRouter` with the default routes from the `CrudRoute` type.
   ///
   /// - Parameters:
@@ -118,12 +117,15 @@ extension BasicCrudRouter {
       delete: CrudRoute.delete(/Route.delete, path: pathComponents, idIso: idIso),
       fetch: CrudRoute.fetch(/Route.fetch, path: pathComponents),
       fetchOne: CrudRoute.fetchId(/Route.fetchOne, path: pathComponents, idIso: idIso),
-      insert: CrudRoute.insert(/Route.insert, path: pathComponents, decoder: decoder, encoder: encoder),
-      update: CrudRoute
-        .update(/Route.update, path: pathComponents, idIso: idIso, decoder: decoder, encoder: encoder)
+      insert: CrudRoute.insert(
+        /Route.insert, path: pathComponents, decoder: decoder, encoder: encoder),
+      update:
+        CrudRoute
+        .update(
+          /Route.update, path: pathComponents, idIso: idIso, decoder: decoder, encoder: encoder)
     )
   }
-  
+
   /// Create a new `BasicCrudRouter` with the default routes from the `CrudRoute` type.
   ///
   /// - Parameters:
@@ -138,12 +140,14 @@ extension BasicCrudRouter {
     encoder: JSONEncoder = .init()
   ) -> Self {
     assert(pathComponents.count > 0, "No path components found")
-    return .default(path: NonEmptyArray<String>(pathComponents)!, idIso: idIso, decoder: decoder, encoder: encoder)
+    return .default(
+      path: NonEmptyArray<String>(pathComponents)!, idIso: idIso, decoder: decoder, encoder: encoder
+    )
   }
 }
 
 extension BasicCrudRouter where Model.ID == UUID {
-  
+
   /// Create a new `BasicCrudRouter` with the default routes from the `CrudRoute` type.
   ///
   /// - Parameters:
@@ -157,7 +161,7 @@ extension BasicCrudRouter where Model.ID == UUID {
   ) -> Self {
     .default(path: pathComponents, idIso: .uuid, decoder: decoder, encoder: encoder)
   }
-  
+
   /// Create a new `BasicCrudRouter` with the default routes from the `CrudRoute` type.
   ///
   /// - Parameters:
@@ -209,7 +213,7 @@ func parsePath(_ pathComponents: NonEmptyArray<String>) -> Router<Void> {
 }
 
 extension Array where Element == CRUDRouteType {
-  
+
   /// Convenience for creating an array of all the `CRUDRouteType`'s.
   public static var all: Self { CRUDRouteType.allCases }
 }

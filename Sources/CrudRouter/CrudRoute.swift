@@ -6,7 +6,7 @@ import Prelude
 
 /// A namespace for creating routers that can handle CRUD operations.
 public enum CrudRoute {
-  
+
   /// Create a router that matches on  DELETE /{{ path }}/:id
   ///
   /// - Parameters:
@@ -39,7 +39,7 @@ public enum CrudRoute {
       %> parsePath(pathComponents)
       <% end
   }
-  
+
   /// Create a router that matches on single query parameter
   ///
   /// GET /{{ path }}?{{ key }}=:iso
@@ -59,7 +59,7 @@ public enum CrudRoute {
       %> queryParam(param.key, param.iso)
       <% end
   }
-  
+
   /// Create a router that matches on `Codable` query parameters
   ///
   /// GET /{{ path }}?{{ queryParams }}
@@ -77,7 +77,7 @@ public enum CrudRoute {
       %> queryParams(Param.self)
       <% end
   }
-  
+
   /// Create a router that matches on two query parameter
   ///
   /// GET /{{ path }}?{{ aParam.key }}=:aParam.iso&{{ bParam.key }}=:bParam.iso

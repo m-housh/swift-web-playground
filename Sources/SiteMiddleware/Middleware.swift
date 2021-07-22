@@ -24,11 +24,11 @@ public func siteMiddleware(
     logger: { logger?.debug(.init(stringLiteral: $0)) },
     uuid: UUID.init
   )
-  <<< route(
-    router: environment.router,
-    notFound: writeStatus(.notFound) >=> respond(json: "{}")
-  )
-  <| apiMiddleware(environment, logger)
+    <<< route(
+      router: environment.router,
+      notFound: writeStatus(.notFound) >=> respond(json: "{}")
+    )
+    <| apiMiddleware(environment, logger)
 }
 
 /// Handle's the parsed routes, and interacts with the database to return the appropriate response to the client.
@@ -117,7 +117,7 @@ private func apiMiddleware(
         .deleteUser(id)
         .run
         .flatMap(respond(on: conn))
-      
+
     case .favorites(.default(.fetch)):
       logger?.debug("WE SHOULD NOT HIT THIS ROUTE!")
       return conn.map(const(()))
@@ -134,8 +134,7 @@ private func apiMiddleware(
 private func respond<A>(
   on conn: Conn<StatusLineOpen, ServerRoute>
 ) -> (Either<Error, A>) -> IO<Conn<ResponseEnded, Data>>
-where A: Encodable
-{
+where A: Encodable {
   { (eitherErrorOrOther: Either<Error, A>) -> IO<Conn<ResponseEnded, Data>> in
     switch eitherErrorOrOther {
     case let .left(error):
@@ -157,8 +156,7 @@ where A: Encodable
 ///   - conn: The incoming connection used to respond.
 private func respond(
   on conn: Conn<StatusLineOpen, ServerRoute>
-) -> (Either<Error, Void>) -> IO<Conn<ResponseEnded, Data>>
-{
+) -> (Either<Error, Void>) -> IO<Conn<ResponseEnded, Data>> {
   { (eitherErrorOrOther: Either<Error, Void>) -> IO<Conn<ResponseEnded, Data>> in
     switch eitherErrorOrOther {
     case let .left(error):

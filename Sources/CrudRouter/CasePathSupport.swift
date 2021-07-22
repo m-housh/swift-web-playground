@@ -4,7 +4,7 @@ import Foundation
 import Prelude
 
 extension PartialIso {
-  
+
   /// Create a new `PartialIso` with the given `CasePath`.
   ///
   /// - Parameters:

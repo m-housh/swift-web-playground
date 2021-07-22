@@ -23,8 +23,21 @@ extension EitherIO where E == Error {
   }
 }
 
+extension EitherIO where E == Error, A == Void {
+
+  /// Return an `EitherIO` from a closure that can throw errors.
+  public static func catching(_ work: @escaping () throws -> Void) -> EitherIO {
+    do {
+      try work()
+      return .init(run: .init { .right(()) })
+    } catch {
+      return .init(run: .init { .left(error) })
+    }
+  }
+}
+
 extension Either where L: Error {
-  
+
   /// Convert a `Result` to an `Either` type.
   init(result: Result<R, L>) {
     switch result {
@@ -37,7 +50,7 @@ extension Either where L: Error {
 }
 
 extension PostgresDatabase {
-  
+
   /// Run a raw query on the database. Returning the future as an `EitherIO` type.
   ///
   /// - Parameters:
@@ -50,7 +63,7 @@ extension PostgresDatabase {
 private let logger = Logger(label: "Postgres")
 
 extension EventLoopGroupConnectionPool where Source == PostgresConnectionSource {
-  
+
   /// Convenience access to the database.
   public var sqlDatabase: SQLDatabase {
     self.database(logger: logger).sql()
@@ -82,7 +95,7 @@ extension SQLQueryFetcher {
 }
 
 extension SQLQueryBuilder {
-  
+
   /// Wraps the default query in one that returns an `EitherIO` type instead of an `EventloopFuture`.
   public func run() -> EitherIO<Error, Void> {
     .init(self.run())
