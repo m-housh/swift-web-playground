@@ -54,12 +54,13 @@ where I: Encodable, A: Decodable {
 
 public func update<U, A>(
   table: SQLExpression,
-  on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
+  on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>,
+  idColumn: SQLExpression = SQLIdentifier("id")
 ) -> (U) -> EitherIO<Error, A>
 where U: Encodable, U: Identifiable, U.ID: Encodable, A: Decodable {
   { request in
     .catching {
-      try updateBuilder(updating: request, table: table, on: pool)
+      try updateBuilder(updating: request, table: table, on: pool, idColumn: idColumn)
         .returning(.all)
         .first(decoding: A.self)
         .mapExcept(requireSome("update: \(table) : \(request)"))

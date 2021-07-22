@@ -73,7 +73,7 @@ private func loadEnvironment(
   eventLoopGroup: EventLoopGroup
 ) -> (EnvVars) -> EitherIO<Error, ServerEnvironment> {
   { envVars in
-    return pure(
+    pure(
       ServerEnvironment(
         database: .live(
           pool: .init(

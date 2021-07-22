@@ -17,14 +17,25 @@ final class RouterTests: XCTestCase {
   let router = ServerRouter.router(decoder: JSONDecoder(), encoder: JSONEncoder())
 
   func testFavoritesFetchRoute() {
-    let route = ServerRoute.favorites(.fetch)
+    let route = ServerRoute.favorites(.fetch(nil))
     let request =
       URLRequest(url: URL(string: "favorites")!)
       |> \.httpMethod .~ "get"
 
     XCTAssertEqual(route, router.match(request: request))
-    XCTAssertEqual(request, router.request(for: ServerRoute.favorites(.fetch)))
-    XCTAssertEqual("favorites", router.templateUrl(for: route)?.absoluteString)
+    XCTAssertEqual(request, router.request(for: ServerRoute.favorites(.fetch(nil))))
+  }
+  
+  func testFavoritesFetchRouteWithUserId() {
+    let userId = UUID()
+    let route = ServerRoute.favorites(.fetch(userId))
+    
+    let request =
+      URLRequest(url: URL(string: "favorites?userId=\(userId)")!)
+      |> \.httpMethod .~ "get"
+
+    XCTAssertEqual(route, router.match(request: request))
+    XCTAssertEqual(request, router.request(for: ServerRoute.favorites(.fetch(userId))))
   }
 
   func testUsersFetchRoute() {
@@ -40,13 +51,13 @@ final class RouterTests: XCTestCase {
 
   func testFavoritesFetchOneRoute() {
     let id = UUID()
-    let route = ServerRoute.favorites(.fetchOne(id: id))
+    let route = ServerRoute.favorites(.default(.fetchOne(id: id)))
     let request =
       URLRequest(url: URL(string: "favorites/\(id)")!)
       |> \.httpMethod .~ "get"
 
     XCTAssertEqual(route, router.match(request: request))
-    XCTAssertEqual(request, router.request(for: .favorites(.fetchOne(id: id))))
+    XCTAssertEqual(request, router.request(for: .favorites(.default(.fetchOne(id: id)))))
   }
 
   func testUsersFetchOneRoute() {
@@ -63,7 +74,7 @@ final class RouterTests: XCTestCase {
   func testFavoritesInsertRoute() {
     let userId = UUID()
     let favorite = DatabaseClient.InsertFavoriteRequest(userId: userId, description: "blob")
-    let route = ServerRoute.favorites(.insert(favorite))
+    let route = ServerRoute.favorites(.default(.insert(favorite)))
     let request =
       URLRequest(url: URL(string: "favorites")!)
       |> \.httpMethod .~ "post"
@@ -71,7 +82,7 @@ final class RouterTests: XCTestCase {
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertNotNil(request.httpBody)
-    XCTAssertEqual(request, router.request(for: .favorites(.insert(favorite))))
+    XCTAssertEqual(request, router.request(for: .favorites(.default(.insert(favorite)))))
   }
 
   func testUsersInsertRoute() {
@@ -89,8 +100,8 @@ final class RouterTests: XCTestCase {
 
   func testFavoritesUpdateRoute() {
     let id = UUID()
-    let update = DatabaseClient.UpdateFavoriteRequest(id: id, description: "blob")
-    let route = ServerRoute.favorites(.update(id: id, update: update))
+    let update = ServerRoute.UpdateFavoriteRequest(description: "blob")
+    let route = ServerRoute.favorites(.default(.update(id: id, update: update)))
     let request =
       URLRequest(url: URL(string: "favorites/\(id)")!)
       |> \.httpMethod .~ "post"
@@ -98,12 +109,12 @@ final class RouterTests: XCTestCase {
 
     XCTAssertEqual(route, router.match(request: request))
     XCTAssertNotNil(request.httpBody)
-    XCTAssertEqual(request, router.request(for: .favorites(.update(id: id, update: update))))
+    XCTAssertEqual(request, router.request(for: .favorites(.default(.update(id: id, update: update)))))
   }
 
   func testUsersUpdateRoute() {
     let id = UUID()
-    let update = DatabaseClient.UpdateUserRequest(id: id, name: "blob")
+    let update = ServerRoute.UpdateUserRequest(name: "blob")
     let route = ServerRoute.users(.update(id: id, update: update))
     let request =
       URLRequest(url: URL(string: "users/\(id)")!)
@@ -117,13 +128,13 @@ final class RouterTests: XCTestCase {
 
   func testFavoritesDeleteRoute() {
     let id = UUID()
-    let route = ServerRoute.favorites(.delete(id: id))
+    let route = ServerRoute.favorites(.default(.delete(id: id)))
     let request =
       URLRequest(url: URL(string: "favorites/\(id)")!)
       |> \.httpMethod .~ "delete"
 
     XCTAssertEqual(route, router.match(request: request))
-    XCTAssertEqual(request, router.request(for: .favorites(.delete(id: id))))
+    XCTAssertEqual(request, router.request(for: .favorites(.default(.delete(id: id)))))
   }
 
   func testUsersDeleteRoute() {

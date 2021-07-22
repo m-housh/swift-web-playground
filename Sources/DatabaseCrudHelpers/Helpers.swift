@@ -74,9 +74,3 @@ extension SQLQueryBuilder {
 extension String {
   public static let all = "*"
 }
-
-//extension String: SQLExpression {
-//  public func serialize(to serializer: inout SQLSerializer) {
-//    SQLIdentifier(self).serialize(to: &serializer)
-//  }
-//}
