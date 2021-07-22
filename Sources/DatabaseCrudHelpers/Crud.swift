@@ -2,6 +2,12 @@ import Either
 import Foundation
 import PostgresKit
 
+/// Creates a function that can be used to delete a model by id from the database.
+///
+/// - Parameters:
+///    - table: The table identifier to delete the model from.
+///    - pool: The connection pool to run the request on.
+///    - idColumn: The id column identifier, defaults to "id".
 public func delete<ID>(
   from table: SQLExpression,
   on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>,
@@ -13,62 +19,84 @@ where ID: Encodable {
   }
 }
 
-public func fetch<A>(
+/// Creates a function that can be used to fetch all models from the database.
+///
+/// - Parameters:
+///    - table: The table identifier to delete the model from.
+///    - pool: The connection pool to run the request on.
+public func fetch<Model>(
   from table: SQLExpression,
   on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
-) -> () -> EitherIO<Error, [A]>
-where A: Decodable {
+) -> () -> EitherIO<Error, [Model]>
+where Model: Decodable {
   {
     fetchBuilder(from: table, on: pool)
-      .all(decoding: A.self)
+      .all(decoding: Model.self)
   }
 }
 
-public func fetchId<ID, A>(
+/// Creates a function that can be used to fetch a model by id from the database.
+///
+/// - Parameters:
+///    - table: The table identifier to delete the model from.
+///    - pool: The connection pool to run the request on.
+///    - idColumn: The id column identifier, defaults to "id".
+public func fetchId<ID, Model>(
   from table: SQLExpression,
   on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>,
   idColumn: SQLExpression = SQLIdentifier("id")
-) -> (ID) -> EitherIO<Error, A>
-where ID: Encodable, A: Decodable {
-  { id -> EitherIO<Error, A> in
+) -> (ID) -> EitherIO<Error, Model>
+where ID: Encodable, Model: Decodable {
+  { id -> EitherIO<Error, Model> in
     fetchIdBuilder(id: id, from: table, on: pool)
-      .first(decoding: A.self)
+      .first(decoding: Model.self)
       .mapExcept(requireSome("fetchId: \(table) : \(id)"))
   }
 }
 
-public func insert<I, A>(
+/// Creates a function that can be used to insert a model into the database.
+///
+/// - Parameters:
+///    - table: The table identifier to delete the model from.
+///    - pool: The connection pool to run the request on.
+public func insert<Insert, Model>(
   to table: SQLExpression,
   on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
-) -> (I) -> EitherIO<Error, A>
-where I: Encodable, A: Decodable {
+) -> (Insert) -> EitherIO<Error, Model>
+where Insert: Encodable, Model: Decodable {
   { request in
     .catching {
       try insertBuilder(inserting: request, to: table, on: pool)
         .returning(.all)
-        .first(decoding: A.self)
+        .first(decoding: Model.self)
         .mapExcept(requireSome("insert: \(table) : \(request)"))
     }
   }
 }
 
-public func update<U, A>(
+/// Creates a function that can be used to update a model by id in the database.
+///
+/// - Parameters:
+///    - table: The table identifier to delete the model from.
+///    - pool: The connection pool to run the request on.
+///    - idColumn: The id column identifier, defaults to "id".
+public func update<Update, Model>(
   table: SQLExpression,
   on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>,
   idColumn: SQLExpression = SQLIdentifier("id")
-) -> (U) -> EitherIO<Error, A>
-where U: Encodable, U: Identifiable, U.ID: Encodable, A: Decodable {
+) -> (Update) -> EitherIO<Error, Model>
+where Update: Encodable, Update: Identifiable, Update.ID: Encodable, Model: Decodable {
   { request in
     .catching {
       try updateBuilder(updating: request, table: table, on: pool, idColumn: idColumn)
         .returning(.all)
-        .first(decoding: A.self)
+        .first(decoding: Model.self)
         .mapExcept(requireSome("update: \(table) : \(request)"))
     }
   }
 }
 
-func requireSome<A>(
+private func requireSome<A>(
   _ message: String
 ) -> (Either<Error, A?>) -> Either<Error, A> {
   { e in

@@ -1,6 +1,13 @@
 import Foundation
 import PostgresKit
 
+/// Creates an `SQLDeleteBuilder` that can be extended or executed later.
+///
+/// - Parameters:
+///    - id: The id of the model to delete from the database.
+///    - table: The table identifier to delete the model from.
+///    - pool: The connection pool to run the request on.
+///    - idColumn: The id column identifier, defaults to "id".
 public func deleteBuilder<ID>(
   id: ID,
   from table: SQLExpression,
@@ -13,6 +20,13 @@ where ID: Encodable
     .where(idColumn, .equal, SQLBind(id))
 }
 
+/// Creates an `SQLSelectBuilder` that can be extended or executed later.
+///
+/// Typically used to fetch all / a list of models from the database.
+///
+/// - Parameters:
+///    - table: The table identifier to fetch the model from.
+///    - pool: The connection pool to run the request on.
 public func fetchBuilder(
   from table: SQLExpression,
   on pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
@@ -23,6 +37,15 @@ public func fetchBuilder(
     .from(table)
 }
 
+/// Creates an `SQLSelectBuilder` that can be extended or executed later.
+///
+/// Used to fetch a specific model by id.
+///
+/// - Parameters:
+///    - id: The id of the model to delete from the database.
+///    - table: The table identifier to fetch the model from.
+///    - pool: The connection pool to run the request on.
+///    - idColumn: The id column identifier, defaults to "id".
 public func fetchIdBuilder<ID>(
   id: ID,
   from table: SQLExpression,
@@ -37,6 +60,15 @@ where ID: Encodable
     .where(idColumn, .equal, SQLBind(id))
 }
 
+/// Creates an `SQLInsertBuilder` that can be extended or executed later.
+///
+/// Used to insert a new model.
+///
+/// - Parameters:
+///    - model: The model to insert in the database.
+///    - table: The table identifier to insert the model.
+///    - pool: The connection pool to run the request on.
+///    - idColumn: The id column identifier, defaults to "id".
 public func insertBuilder<Insert>(
   inserting model: Insert,
   to table: SQLExpression,
@@ -48,6 +80,15 @@ where Insert: Encodable
     .model(model)
 }
 
+/// Creates an `SQLSelectBuilder` that can be extended or executed later.
+///
+/// Used to fetch a specific model by id.
+///
+/// - Parameters:
+///    - id: The id of the model to update in the database.
+///    - table: The table identifier to update the model on.
+///    - pool: The connection pool to run the request on.
+///    - idColumn: The id column identifier, defaults to "id".
 public func updateBuilder<Update>(
   updating model: Update,
   table: SQLExpression,

@@ -29,3 +29,19 @@ run-server-linux:
 		--project-directory . \
 		up \
 		--build
+		
+env-example:
+	@cp Bootstrap/playground-env-example .playground-env
+	
+format:
+	@docker run \
+		--rm \
+		-it \
+		--workdir "/work" \
+		--volume "$(PWD):/work" \
+		--platform linux/amd64 \
+		mhoush/swift-format:latest \
+		format \
+		--in-place \
+		--recursive \
+		.

@@ -54,17 +54,7 @@ extension DatabaseClient {
         .map(const(()))
 
       },
-      shutdown: {
-        .init(
-          run: .init {
-            do {
-              try pool.syncShutdownGracefully()
-              return .right(())
-            } catch {
-              return .left(error)
-            }
-          })
-      },
+      shutdown: .catching { try pool.syncShutdownGracefully() },
       updateFavorite: update(table: Table.favorites, on: pool),
       updateUser: update(table: Table.users, on: pool)
     )

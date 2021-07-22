@@ -8,6 +8,13 @@ import Prelude
 import ServerRouter
 import SharedModels
 
+/// Creates the full middleware suite that is responsible for parsing and responding to incoming request connections.
+/// This combines a request logging middleware that will log incoming requests / routes, not-found middleware for handling
+/// requests at paths that we don't accept / no how to handle, and the api-middleware that is used for interactions between the database.
+///
+/// - Parameters:
+///    - environment: The server environment values.
+///    - logger: An optional logger used for debugging and logging incoming requests.
 public func siteMiddleware(
   environment: ServerEnvironment,
   logger: Logger? = nil
@@ -24,8 +31,13 @@ public func siteMiddleware(
   <| apiMiddleware(environment, logger)
 }
 
-// Handle's the parsed routes, and interacts with the database to return
-// the appropriate response to the client.
+/// Handle's the parsed routes, and interacts with the database to return the appropriate response to the client.
+/// Adding new routes to the `ServerRoute` requires them to be handled here or there will be compile errors,
+/// which is one of the advantages.
+///
+/// - Parameters:
+///    - environment: The server environment values.
+///    - logger: An optional logger used for debugging.
 private func apiMiddleware(
   _ environment: ServerEnvironment,
   _ logger: Logger?
@@ -35,7 +47,7 @@ private func apiMiddleware(
 
     switch route {
     case let .favorites(.fetch(userId)):
-      logger?.debug("fetching favorites")
+      logger?.debug("fetching favorites: \(String(describing: userId))")
       return environment.database
         .fetchFavorites(userId)
         .run
@@ -115,6 +127,10 @@ private func apiMiddleware(
   }
 }
 
+/// Responsible for responding to incoming requests and transforming errors to `ApiError`'s.
+///
+/// - Parameters:
+///   - conn: The incoming connection used to respond.
 private func respond<A>(
   on conn: Conn<StatusLineOpen, ServerRoute>
 ) -> (Either<Error, A>) -> IO<Conn<ResponseEnded, Data>>
@@ -135,6 +151,10 @@ where A: Encodable
   }
 }
 
+/// Responsible for responding to incoming requests and transforming errors to `ApiError`'s.
+///
+/// - Parameters:
+///   - conn: The incoming connection used to respond.
 private func respond(
   on conn: Conn<StatusLineOpen, ServerRoute>
 ) -> (Either<Error, Void>) -> IO<Conn<ResponseEnded, Data>>
