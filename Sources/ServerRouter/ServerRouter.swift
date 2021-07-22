@@ -59,7 +59,7 @@ public func router(
 ) -> Router<ServerRoute> {
 
   let userPath: NonEmptyArray<String> = pathPrefix != nil ?
-    pathPrefix! + ["users"] : .init(["users"])!
+    pathPrefix! + ["users"] : .init(rawValue: ["users"])!
   
   let userRouter = ServerRoute.UserRouter.default(
     path: userPath,
@@ -69,7 +69,7 @@ public func router(
   .router()
   
   let favoritePath: NonEmptyArray<String> = pathPrefix != nil ?
-    pathPrefix! + ["favorites"] : .init(["favorites"])!
+    pathPrefix! + ["favorites"] : .init(rawValue: ["favorites"])!
   
   let defaultFavoriteRouter = ServerRoute.FavoriteRouter.default(
     path: favoritePath,
