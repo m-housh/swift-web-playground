@@ -20,12 +20,10 @@ To run this project locally, first clone the repository.
 ```
 $ git clone https://github.com/m-housh/swift-web-playground.git
 $ cd swift-web-playground
-
 ```
 
 The easiest way is to run using docker compose.
 
 ```
 $ make run-server-linux
-
 ```
