@@ -27,3 +27,34 @@ The easiest way is to run using docker compose.
 ```
 $ make run-server-linux
 ```
+
+When done or if you want to reset the data in the database containers, you can remove containers. Then run
+the following command.
+```
+$ make clean-db-linux
+```
+
+### Alternative
+
+If you don't have `PostgreSQL` installed then you can install via your favorite package manager.  Below is
+how you can install using `homebrew`.
+
+```
+$ brew install postgresql
+```
+
+Start the postgres database.
+```
+$ brew services start postgresql
+```
+
+After the database has started run the following command to create the appropriate database users.
+```
+$ make db
+```
+
+Now you can start the server.
+```
+$ swift run server
+```
+
