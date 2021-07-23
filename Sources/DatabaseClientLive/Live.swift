@@ -8,7 +8,7 @@ import SharedModels
 
 /// Represents the table names in the database.
 enum Table: CustomStringConvertible, SQLExpression {
-  
+
   case users
   case favorites
 
@@ -23,7 +23,7 @@ enum Table: CustomStringConvertible, SQLExpression {
   }
 
   var description: String { tableName }
-  
+
   func serialize(to serializer: inout SQLSerializer) {
     SQLIdentifier(tableName).serialize(to: &serializer)
   }
