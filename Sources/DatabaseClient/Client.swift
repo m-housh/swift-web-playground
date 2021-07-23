@@ -9,85 +9,202 @@ import SharedModels
 /// Represents the database interactions.
 public struct DatabaseClient {
 
-  public var deleteFavorite: (UserFavorite.ID) -> EitherIO<Error, Void>
-  public var deleteUser: (User.ID) -> EitherIO<Error, Void>
-  public var fetchFavorites: (User.ID?) -> EitherIO<Error, [UserFavorite]>
-  public var fetchUsers: () -> EitherIO<Error, [User]>
-  public var fetchFavorite: (UserFavorite.ID) -> EitherIO<Error, UserFavorite>
-  public var fetchUser: (User.ID) -> EitherIO<Error, User>
-  public var insertFavorite: (InsertFavoriteRequest) -> EitherIO<Error, UserFavorite>
-  public var insertUser: (InsertUserRequest) -> EitherIO<Error, User>
-  public var migrate: () -> EitherIO<Error, Void>
-  public var shutdown: () -> EitherIO<Error, Void>
-  public var updateFavorite: (UpdateFavoriteRequest) -> EitherIO<Error, UserFavorite>
-  public var updateUser: (UpdateUserRequest) -> EitherIO<Error, User>
+  /// Actions that can be taken on the users table.
+  public var users: UserClient
 
+  /// Actions that can be taken on the favorites table.
+  public var favorites: UserFavoriteClient
+
+  /// Perform migrations on the database.
+  public var migrate: () -> EitherIO<Error, Void>
+
+  /// Shutdown the database connection.
+  public var shutdown: () -> EitherIO<Error, Void>
+
+  /// Create a new database client.
+  ///
+  /// - Parameters:
+  ///   - users: The user client to use.
+  ///   - favorites: The user favorites client to use.
+  ///   - migrate: Perform migrations on the database.
+  ///   - shutdown: Shutdown the database connection.
   public init(
-    deleteFavorite: @escaping (UserFavorite.ID) -> EitherIO<Error, Void>,
-    deleteUser: @escaping (User.ID) -> EitherIO<Error, Void>,
-    fetchFavorites: @escaping (User.ID?) -> EitherIO<Error, [UserFavorite]>,
-    fetchUsers: @escaping () -> EitherIO<Error, [User]>,
-    fetchFavorite: @escaping (UserFavorite.ID) -> EitherIO<Error, UserFavorite>,
-    insertFavorite: @escaping (InsertFavoriteRequest) -> EitherIO<Error, UserFavorite>,
-    fetchUser: @escaping (User.ID) -> EitherIO<Error, User>,
-    insertUser: @escaping (InsertUserRequest) -> EitherIO<Error, User>,
+    users: UserClient,
+    favorites: UserFavoriteClient,
     migrate: @escaping () -> EitherIO<Error, Void>,
-    shutdown: @escaping () -> EitherIO<Error, Void>,
-    updateFavorite: @escaping (UpdateFavoriteRequest) -> EitherIO<Error, UserFavorite>,
-    updateUser: @escaping (UpdateUserRequest) -> EitherIO<Error, User>
+    shutdown: @escaping () -> EitherIO<Error, Void>
   ) {
-    self.deleteFavorite = deleteFavorite
-    self.deleteUser = deleteUser
-    self.fetchFavorites = fetchFavorites
-    self.fetchUsers = fetchUsers
-    self.fetchFavorite = fetchFavorite
-    self.fetchUser = fetchUser
-    self.insertFavorite = insertFavorite
-    self.insertUser = insertUser
+    self.users = users
+    self.favorites = favorites
     self.migrate = migrate
     self.shutdown = shutdown
-    self.updateFavorite = updateFavorite
-    self.updateUser = updateUser
   }
+}
 
-  public struct InsertFavoriteRequest: Codable, Equatable {
-    public let userId: User.ID
-    public let description: String
+// MARK: - Users
+extension DatabaseClient {
 
-    public init(userId: User.ID, description: String) {
-      self.userId = userId
-      self.description = description
-    }
-  }
+  /// Represents actions that can be taken on the users table in the database.
+  public struct UserClient {
 
-  public struct InsertUserRequest: Codable, Equatable {
-    public let name: String
+    /// Delete a user from the database.
+    public var delete: (User.ID) -> EitherIO<Error, Void>
 
-    public init(name: String) {
-      self.name = name
-    }
-  }
+    /// Fetch all users from the database.
+    public var fetch: () -> EitherIO<Error, [User]>
 
-  public struct UpdateFavoriteRequest: Codable, Equatable, Identifiable {
-    public let id: UserFavorite.ID
-    public let description: String?
+    /// Fetch a user by id from the database.
+    public var fetchId: (User.ID) -> EitherIO<Error, User>
 
-    public init(id: UserFavorite.ID, description: String?) {
-      self.id = id
-      self.description = description
-    }
-  }
+    /// Insert a new user to the database.
+    public var insert: (InsertRequest) -> EitherIO<Error, User>
 
-  public struct UpdateUserRequest: Codable, Equatable, Identifiable {
-    public let id: User.ID
-    public let name: String?
+    /// Update a user in the database.
+    public var update: (UpdateRequest) -> EitherIO<Error, User>
 
+    /// Create a new user database client.
+    ///
+    /// - Parameters:
+    ///   - delete: Function that deletes a user from the database.
+    ///   - fetch: Function that fetches all users from the database.
+    ///   - fetchId: Function that fetches a user by id from the database.
+    ///   - insert: Function that inserts a new user to the database.
+    ///   - update: Function that updates a user in the database.
     public init(
-      id: User.ID,
-      name: String?
+      delete: @escaping (User.ID) -> EitherIO<Error, Void>,
+      fetch: @escaping () -> EitherIO<Error, [User]>,
+      fetchId: @escaping (User.ID) -> EitherIO<Error, User>,
+      insert: @escaping (InsertRequest) -> EitherIO<Error, User>,
+      update: @escaping (UpdateRequest) -> EitherIO<Error, User>
     ) {
-      self.id = id
-      self.name = name
+      self.delete = delete
+      self.fetch = fetch
+      self.fetchId = fetchId
+      self.insert = insert
+      self.update = update
+    }
+
+    /// Represents the data needed to insert a new user to the database.
+    public struct InsertRequest: Codable, Equatable {
+
+      /// The user's name.
+      public let name: String
+
+      /// Create a new insert user request.
+      ///
+      /// - Parameters:
+      ///   - name: The user's name.
+      public init(name: String) {
+        self.name = name
+      }
+    }
+
+    /// Represents the data needed to update a user in the database.
+    public struct UpdateRequest: Codable, Equatable, Identifiable {
+
+      /// The user's unique identifier in the database.
+      public let id: User.ID
+
+      /// The user's updated name.
+      public let name: String?
+
+      /// Create a new update user request.
+      ///
+      /// - Parameters:
+      ///    - id: The user's unique identifier in the database.
+      ///    - name: The user's updated name.
+      public init(
+        id: User.ID,
+        name: String?
+      ) {
+        self.id = id
+        self.name = name
+      }
+    }
+  }
+}
+
+// MARK: - UserFavorites
+extension DatabaseClient {
+
+  /// Represents the actions that can be taken on the user favorites table.
+  public struct UserFavoriteClient {
+
+    /// Delete a user favorite from the database.
+    public var delete: (UserFavorite.ID) -> EitherIO<Error, Void>
+
+    /// Fetch all user favorites or all user favorites for the given user id from the database.
+    public var fetch: (User.ID?) -> EitherIO<Error, [UserFavorite]>
+
+    /// Fetch a user favorite  by id from the database.
+    public var fetchId: (UserFavorite.ID) -> EitherIO<Error, UserFavorite>
+
+    /// Insert a new user favorite to the database.
+    public var insert: (InsertRequest) -> EitherIO<Error, UserFavorite>
+
+    /// Update a user favorite in the database.
+    public var update: (UpdateRequest) -> EitherIO<Error, UserFavorite>
+
+    /// Create a new user favorite database client.
+    ///
+    /// - Parameters:
+    ///   - delete: Function that deletes a user favorite from the database.
+    ///   - fetch: Function that fetchesall user favorites or all user favorites for the given user id from the database.
+    ///   - fetchId: Function that fetches a user favorite by id from the database.
+    ///   - insert: Function that inserts a new user favorite to the database.
+    ///   - update: Function that updates a user favorite in the database.
+    public init(
+      delete: @escaping (UserFavorite.ID) -> EitherIO<Error, Void>,
+      fetch: @escaping (User.ID?) -> EitherIO<Error, [UserFavorite]>,
+      fetchId: @escaping (UserFavorite.ID) -> EitherIO<Error, UserFavorite>,
+      insert: @escaping (InsertRequest) -> EitherIO<Error, UserFavorite>,
+      update: @escaping (UpdateRequest) -> EitherIO<Error, UserFavorite>
+    ) {
+      self.delete = delete
+      self.fetch = fetch
+      self.fetchId = fetchId
+      self.insert = insert
+      self.update = update
+    }
+
+    /// Represents the data required to insert a new user favorite to the database.
+    public struct InsertRequest: Codable, Equatable {
+
+      /// The user's identifier that the favorite belongs to.
+      public let userId: User.ID
+
+      /// The description of the user favorite.
+      public let description: String
+
+      /// Create a new insert request.
+      ///
+      /// - Parameters:
+      ///   - userId: The user's identifier that the favorite belongs to.
+      ///   - description: The description of the user favorite.
+      public init(userId: User.ID, description: String) {
+        self.userId = userId
+        self.description = description
+      }
+    }
+
+    /// Represents the data required to update a user favorite in the database.
+    public struct UpdateRequest: Codable, Equatable, Identifiable {
+
+      /// The unique identifier of the user favorite in the database.
+      public let id: UserFavorite.ID
+
+      /// The updated description of the user favorite.
+      public let description: String?
+
+      /// Create a new update favorites request.
+      ///
+      /// - Parameters:
+      ///   - id: The unique identifier of the user favorite in the database.
+      ///   - description: The updated description of the user favorite.
+      public init(id: UserFavorite.ID, description: String?) {
+        self.id = id
+        self.description = description
+      }
     }
   }
 }

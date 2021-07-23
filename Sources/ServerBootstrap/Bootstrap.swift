@@ -8,6 +8,10 @@ import Prelude
 import ServerRouter
 import SiteMiddleware
 
+/// Responsible for loading the server environment and preparing database connections.
+///
+/// - Parameters:
+///   - eventLoopGroup: The event loop group to run actions on.
 public func bootstrap(
   eventLoopGroup: EventLoopGroup
 ) -> EitherIO<Error, ServerEnvironment> {

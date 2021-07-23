@@ -9,7 +9,7 @@ import Prelude
 public enum CrudRouteType: CaseIterable, Equatable {
   case delete
   case fetch
-  case fetchOne
+  case fetchId
   case insert
   case update
 }
@@ -23,7 +23,7 @@ public struct CrudRouter<Route> {
   public var fetch: Router<Route>?
 
   /// The router to use for the fetch by id route.
-  public var fetchOne: Router<Route>?
+  public var fetchId: Router<Route>?
 
   /// The router to use for the insert route.
   public var insert: Router<Route>?
@@ -48,7 +48,7 @@ public struct CrudRouter<Route> {
   ) {
     self.delete = delete
     self.fetch = fetch
-    self.fetchOne = fetchOne
+    self.fetchId = fetchOne
     self.insert = insert
     self.update = update
   }
@@ -63,8 +63,8 @@ public struct CrudRouter<Route> {
       return self.delete
     case .fetch:
       return self.fetch
-    case .fetchOne:
-      return self.fetchOne
+    case .fetchId:
+      return self.fetchId
     case .insert:
       return self.insert
     case .update:

@@ -49,42 +49,48 @@ private func apiMiddleware(
     case let .favorites(.fetch(userId)):
       logger?.debug("fetching favorites: \(String(describing: userId))")
       return environment.database
-        .fetchFavorites(userId)
+        .favorites
+        .fetch(userId)
         .run
         .flatMap(respond(on: conn))
 
     case .users(.fetch):
       logger?.debug("fetching users")
       return environment.database
-        .fetchUsers()
+        .users
+        .fetch()
         .run
         .flatMap(respond(on: conn))
 
     case let .favorites(.fetchId(id: id)):
       logger?.debug("fetching favorites.id: \(id)")
       return environment.database
-        .fetchFavorite(id)
+        .favorites
+        .fetchId(id)
         .run
         .flatMap(respond(on: conn))
 
     case let .users(.fetchId(id: id)):
       logger?.debug("fetching user.id: \(id)")
       return environment.database
-        .fetchUser(id)
+        .users
+        .fetchId(id)
         .run
         .flatMap(respond(on: conn))
 
     case let .favorites(.insert(request)):
       logger?.debug("inserting favorites: \(request)")
       return environment.database
-        .insertFavorite(.init(userId: request.userId, description: request.description))
+        .favorites
+        .insert(.init(userId: request.userId, description: request.description))
         .run
         .flatMap(respond(on: conn))
 
     case let .users(.insert(request)):
       logger?.debug("inserting user: \(request)")
       return environment.database
-        .insertUser(.init(name: request.name))
+        .users
+        .insert(.init(name: request.name))
         .run
         .flatMap(respond(on: conn))
 
@@ -92,7 +98,8 @@ private func apiMiddleware(
       logger?.debug("updating favorite.id: \(id)")
       logger?.debug("with updates: \(update)")
       return environment.database
-        .updateFavorite(.init(id: id, description: update.description))
+        .favorites
+        .update(.init(id: id, description: update.description))
         .run
         .flatMap(respond(on: conn))
 
@@ -100,21 +107,24 @@ private func apiMiddleware(
       logger?.debug("updating user.id: \(id)")
       logger?.debug("with updates: \(update)")
       return environment.database
-        .updateUser(.init(id: id, name: update.name))
+        .users
+        .update(.init(id: id, name: update.name))
         .run
         .flatMap(respond(on: conn))
 
     case let .favorites(.delete(id: id)):
       logger?.debug("deleting favorite.id: \(id)")
       return environment.database
-        .deleteFavorite(id)
+        .favorites
+        .delete(id)
         .run
         .flatMap(respond(on: conn))
 
     case let .users(.delete(id: id)):
       logger?.debug("deleting user.id: \(id)")
       return environment.database
-        .deleteUser(id)
+        .users
+        .delete(id)
         .run
         .flatMap(respond(on: conn))
     }

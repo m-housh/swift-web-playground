@@ -31,24 +31,16 @@ enum Table: CustomStringConvertible, SQLExpression {
 
 extension DatabaseClient {
 
+  /// Creates the live implementation of a `DatabaseClient`.
+  ///
+  /// - Parameters:
+  ///   - pool: The event loop connection pool, used to connect to the database.
   public static func live(
     pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
   ) -> Self {
     Self.init(
-      deleteFavorite: DatabaseCrud.delete(from: Table.favorites, on: pool),
-      deleteUser: DatabaseCrud.delete(from: Table.users, on: pool),
-      fetchFavorites: { optionalUserId in
-        let builder = DatabaseBuilders.fetch(from: Table.favorites, on: pool)
-        if let userId = optionalUserId {
-          builder.where("userId", .equal, userId)
-        }
-        return builder.all(decoding: UserFavorite.self)
-      },
-      fetchUsers: DatabaseCrud.fetch(from: Table.users, on: pool),
-      fetchFavorite: DatabaseCrud.fetchId(from: Table.favorites, on: pool),
-      insertFavorite: DatabaseCrud.insert(to: Table.favorites, on: pool),
-      fetchUser: DatabaseCrud.fetchId(from: Table.users, on: pool),
-      insertUser: DatabaseCrud.insert(to: Table.users, on: pool),
+      users: UserClient(pool: pool),
+      favorites: UserFavoriteClient(pool: pool),
       migrate: { () -> EitherIO<Error, Void> in
         let database = pool.database(logger: Logger(label: "Postgres"))
 
@@ -77,9 +69,7 @@ extension DatabaseClient {
         .map(const(()))
 
       },
-      shutdown: { .catching { try pool.syncShutdownGracefully() } },
-      updateFavorite: DatabaseCrud.update(table: Table.favorites, on: pool),
-      updateUser: DatabaseCrud.update(table: Table.users, on: pool)
+      shutdown: { .catching { try pool.syncShutdownGracefully() } }
     )
   }
 
@@ -94,4 +84,36 @@ extension DatabaseClient {
       try self.migrate().run.perform().unwrap()
     }
   #endif
+}
+
+extension DatabaseClient.UserClient {
+
+  init(pool: EventLoopGroupConnectionPool<PostgresConnectionSource>) {
+    self.init(
+      delete: DatabaseCrud.delete(from: Table.users, on: pool),
+      fetch: DatabaseCrud.fetch(from: Table.users, on: pool),
+      fetchId: DatabaseCrud.fetchId(from: Table.users, on: pool),
+      insert: DatabaseCrud.insert(to: Table.users, on: pool),
+      update: DatabaseCrud.update(table: Table.users, on: pool)
+    )
+  }
+}
+
+extension DatabaseClient.UserFavoriteClient {
+
+  init(pool: EventLoopGroupConnectionPool<PostgresConnectionSource>) {
+    self.init(
+      delete: DatabaseCrud.delete(from: Table.favorites, on: pool),
+      fetch: { optionalUserId in
+        let builder = DatabaseBuilders.fetch(from: Table.favorites, on: pool)
+        if let userId = optionalUserId {
+          builder.where("userId", .equal, userId)
+        }
+        return builder.all(decoding: UserFavorite.self)
+      },
+      fetchId: DatabaseCrud.fetchId(from: Table.favorites, on: pool),
+      insert: DatabaseCrud.insert(to: Table.favorites, on: pool),
+      update: DatabaseCrud.update(table: Table.favorites, on: pool)
+    )
+  }
 }

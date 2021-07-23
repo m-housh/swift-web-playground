@@ -12,6 +12,7 @@ services:
     restart: unless-stopped
   
   web:
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Bootstrap/Dockerfile

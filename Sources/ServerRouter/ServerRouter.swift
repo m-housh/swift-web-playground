@@ -48,16 +48,16 @@ private func makeUserRouter(
   encoder: JSONEncoder
 ) -> Router<ApiRoute.UsersRoute> {
   CrudRouter(
-    delete: .delete(/ApiRoute.UsersRoute.delete, path: path, idIso: .uuid),
-    fetch: .fetch(/ApiRoute.UsersRoute.fetch, path: path),
-    fetchOne: .fetchId(/ApiRoute.UsersRoute.fetchId(id:), path: path, idIso: .uuid),
-    insert: .insert(
+    delete: Router.delete(/ApiRoute.UsersRoute.delete, path: path, idIso: .uuid),
+    fetch: Router.fetch(/ApiRoute.UsersRoute.fetch, path: path),
+    fetchOne: Router.fetchId(/ApiRoute.UsersRoute.fetchId(id:), path: path, idIso: .uuid),
+    insert: Router.insert(
       /ApiRoute.UsersRoute.insert,
       path: path,
       decoder: decoder,
       encoder: encoder
     ),
-    update: .update(
+    update: Router.update(
       /ApiRoute.UsersRoute.update,
       path: path,
       idIso: .uuid,
@@ -74,20 +74,20 @@ private func makeFavoriteRouter(
   encoder: JSONEncoder
 ) -> Router<ApiRoute.FavoritesRoute> {
   CrudRouter(
-    delete: .delete(/ApiRoute.FavoritesRoute.delete, path: path, idIso: .uuid),
-    fetch: .fetch(
+    delete: Router.delete(/ApiRoute.FavoritesRoute.delete, path: path, idIso: .uuid),
+    fetch: Router.fetch(
       /ApiRoute.FavoritesRoute.fetch(userId:),
       path: path,
       param: (key: "userId", iso: opt(.uuid))
     ),
-    fetchOne: .fetchId(/ApiRoute.FavoritesRoute.fetchId(id:), path: path, idIso: .uuid),
-    insert: .insert(
+    fetchOne: Router.fetchId(/ApiRoute.FavoritesRoute.fetchId(id:), path: path, idIso: .uuid),
+    insert: Router.insert(
       /ApiRoute.FavoritesRoute.insert,
       path: path,
       decoder: decoder,
       encoder: encoder
     ),
-    update: .update(
+    update: Router.update(
       /ApiRoute.FavoritesRoute.update,
       path: path,
       idIso: .uuid,

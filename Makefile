@@ -22,6 +22,13 @@ clean-db:
 	@dropdb --username playground playground_development || true
 	@dropdb --username playground playground_test || true
 	@dropuser playground || true
+	
+clean-db-linux:
+	@docker-compose \
+		--file Bootstrap/docker-compose.yml \
+		--project-directory . \
+		down \
+		--volumes
 
 run-server-linux:
 	@docker-compose \
