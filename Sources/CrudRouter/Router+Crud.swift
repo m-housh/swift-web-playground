@@ -80,29 +80,6 @@ extension Router {
       <% end
   }
 
-  /// Create a router that matches on two query parameter
-  ///
-  /// GET /{{ path }}?{{ aParam.key }}=:aParam.iso&{{ bParam.key }}=:bParam.iso
-  ///
-  /// - Parameters:
-  ///   - casePath: The case path used for the route.
-  ///   - pathComponents: The path components used in the route.
-  ///   - aParam: The key and partial isomorphisim used to parse the first query parameter.
-  ///   - bParam: The key and partial isomorphisim used to parse the second query parameter.
-  //  public static func fetch<B, C>(
-  //    _ casePath: CasePath<A, (B, C)>,
-  //    path pathComponents: NonEmptyArray<String>,
-  //    param aParam: (key: String, iso: PartialIso<String?, B>),
-  //    param bParam: (key: String, iso: PartialIso<String?, C>)
-  //  ) -> Router {
-  //    .case(casePath)
-  //      <¢> get  // httpMethod
-  //      %> parsePath(pathComponents)
-  //      %> queryParam(aParam.key, aParam.iso)
-  //      <%> queryParam(bParam.key, bParam.iso)
-  //      <% end
-  //  }
-
   /// Create a router that matches on  GET /{{ path }}/:id
   ///
   /// - Parameters:

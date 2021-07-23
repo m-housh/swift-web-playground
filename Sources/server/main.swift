@@ -1,3 +1,5 @@
+// This module holds the executable that starts the server.
+
 import Foundation
 import HttpPipeline
 import Logging
