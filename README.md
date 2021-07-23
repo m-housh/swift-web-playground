@@ -16,45 +16,52 @@ This project utilizes hyper-modularization and is implemented as a swift-package
 ## Quickstart
 
 To run this project locally, first clone the repository.
-
 ```
-$ git clone https://github.com/m-housh/swift-web-playground.git
-$ cd swift-web-playground
+git clone https://github.com/m-housh/swift-web-playground.git
 ```
 
-The easiest way is to run using docker compose.
-
+Move into the project directory.
 ```
-$ make run-server-linux
+cd swift-web-playground
+```
+
+The easiest way is to run using docker compose, if it is installed on your system.  Which will start the
+server and database running in docker containers.
+```
+make run-server-linux
 ```
 
 When done or if you want to reset the data in the database containers, you can remove containers. Then run
 the following command.
 ```
-$ make clean-db-linux
+make clean-db-linux
 ```
 
 ### Alternative
 
-If you don't have `PostgreSQL` installed then you can install via your favorite package manager.  Below is
-how you can install using `homebrew`.
+If you don't have [PostgreSQL](https://www.postgresql.org) installed then you can install via your favorite 
+package manager.  Below is how you can install using [homebrew](https://brew.sh).
+```
+brew install postgresql
+```
 
+Start the postgreSQL database.
 ```
-$ brew install postgresql
-```
-
-Start the postgres database.
-```
-$ brew services start postgresql
+brew services start postgresql
 ```
 
 After the database has started run the following command to create the appropriate database users.
 ```
-$ make db
+make db
 ```
 
 Now you can start the server.
 ```
-$ swift run server
+swift run server
+```
+
+To clean up the database and remove the created user when done, you can run the following command.
+```
+make clean-db
 ```
 
