@@ -12,20 +12,20 @@ extension DatabaseClient {
     pool: EventLoopGroupConnectionPool<PostgresConnectionSource>
   ) -> Self {
     Self.init(
-      deleteFavorite: delete(from: Table.favorites, on: pool),
-      deleteUser: delete(from: Table.users, on: pool),
+      deleteFavorite: DatabaseCrud.delete(from: Table.favorites, on: pool),
+      deleteUser: DatabaseCrud.delete(from: Table.users, on: pool),
       fetchFavorites: { optionalUserId in
-        let builder = fetchBuilder(from: Table.favorites, on: pool)
+        let builder = DatabaseBuilders.fetch(from: Table.favorites, on: pool)
         if let userId = optionalUserId {
           builder.where("userId", .equal, userId)
         }
         return builder.all(decoding: UserFavorite.self)
       },
-      fetchUsers: fetch(from: Table.users, on: pool),
-      fetchFavorite: fetchId(from: Table.favorites, on: pool),
-      insertFavorite: insert(to: Table.favorites, on: pool),
-      fetchUser: fetchId(from: Table.users, on: pool),
-      insertUser: insert(to: Table.users, on: pool),
+      fetchUsers: DatabaseCrud.fetch(from: Table.users, on: pool),
+      fetchFavorite: DatabaseCrud.fetchId(from: Table.favorites, on: pool),
+      insertFavorite: DatabaseCrud.insert(to: Table.favorites, on: pool),
+      fetchUser: DatabaseCrud.fetchId(from: Table.users, on: pool),
+      insertUser: DatabaseCrud.insert(to: Table.users, on: pool),
       migrate: { () -> EitherIO<Error, Void> in
         let database = pool.database(logger: Logger(label: "Postgres"))
 
@@ -55,8 +55,8 @@ extension DatabaseClient {
 
       },
       shutdown: { .catching { try pool.syncShutdownGracefully() } },
-      updateFavorite: update(table: Table.favorites, on: pool),
-      updateUser: update(table: Table.users, on: pool)
+      updateFavorite: DatabaseCrud.update(table: Table.favorites, on: pool),
+      updateUser: DatabaseCrud.update(table: Table.users, on: pool)
     )
   }
 

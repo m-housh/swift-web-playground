@@ -38,6 +38,10 @@ let package = Package(
         .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "NonEmpty", package: "swift-nonempty"),
       ]),
+    .testTarget(
+      name: "CrudRouterTests",
+      dependencies: ["CrudRouter"]
+    ),
     .target(
       name: "DatabaseClient",
       dependencies: [
@@ -63,6 +67,7 @@ let package = Package(
       dependencies: [
         .product(name: "Either", package: "Prelude"),
         .product(name: "PostgresKit", package: "postgres-kit"),
+        .product(name: "NonEmpty", package: "swift-nonempty"),
       ]),
     .target(
       name: "EnvVars",
