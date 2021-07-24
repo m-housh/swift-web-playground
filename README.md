@@ -1,4 +1,5 @@
 [![CI](https://github.com/m-housh/swift-web-playground/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/m-housh/swift-web-playground/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/m-housh/swift-web-playground/branch/main/graph/badge.svg?token=GYr6z4hAce)](https://codecov.io/gh/m-housh/swift-web-playground)
 
 # swift-web-playground
 
