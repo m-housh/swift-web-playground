@@ -24,7 +24,7 @@ jobs:
     - name: Run swift tests
       run: make test-swift
     - name: Upload coverage to Codecov.
-      run: bash <(curl -s https://codecov.io/bash) -J 'swift-web-playground' -t ${{ secrets.CODE_COV_TOKEN }}
+      run: bash <(curl -s https://codecov.io/bash) -X xcodellvm -J -t ${{ secrets.CODE_COV_TOKEN }} -v
 
   ubuntu:
     name: Ubuntu
