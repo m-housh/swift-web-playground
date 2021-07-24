@@ -27,8 +27,9 @@ jobs:
       uses: codecov/codecov-action@v2
       with:
         token: ${{ secrets.CODE_COV_TOKEN }}
-        verbose: true
-        
+        verbose: false 
+        files: ./.build/debug/codecov/swift-web-playground.json
+ 
   ubuntu:
     name: Ubuntu
     runs-on: ubuntu-latest
