@@ -30,7 +30,7 @@ jobs:
       with:
         token: ${{ secrets.CODE_COV_TOKEN }}
         verbose: false 
-        files: ./.build/debug/codecov/swift-web-playground.json
+        files: /tmp/swift-web-playground.lcov
  
   ubuntu:
     name: Ubuntu
