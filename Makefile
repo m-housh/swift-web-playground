@@ -66,3 +66,8 @@ docc-docs:
 copy-docc-archives:
 	. Bootstrap/copy-docc-archives.sh
 	
+code-cov:
+	test -f helpers/code-cov.sh && . helpers/code-cov.sh
+	
+code-cov-report:
+	test -f helpers/code-cov-report.sh && . helpers/code-cov-report.sh
