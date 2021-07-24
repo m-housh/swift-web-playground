@@ -1,4 +1,4 @@
-import Foundation
+import struct Foundation.UUID
 
 /// A simple user favorite. This was created to have a simple `User` relation.
 public struct UserFavorite: Codable, Equatable, Identifiable {

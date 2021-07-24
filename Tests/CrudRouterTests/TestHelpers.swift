@@ -41,7 +41,7 @@ class CrudRouterTestCase: XCTestCase {
   override func setUp() {
     super.setUp()
     
-    let path: NonEmptyArray<String> = .init("test")
+    let path: NonEmptyArray<String> = .init("/test")
     
     let routers: [Router<TestRoute>] = [
       .delete(/TestRoute.delete(id:), path: path, idIso: .int),

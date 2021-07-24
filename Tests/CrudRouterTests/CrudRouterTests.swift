@@ -67,4 +67,5 @@ final class CrudRouterTests: CrudRouterTestCase {
     XCTAssertNotNil(request.httpBody)
     XCTAssertEqual(request, router.request(for: TestRoute.update(id: 43, update: update)))
   }
+
 }

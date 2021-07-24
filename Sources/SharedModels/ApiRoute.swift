@@ -1,6 +1,4 @@
-import Foundation
-
-// TODO: This could possibly be used to generate database crud helpers, by passing a case path ? Although it does offer a separation of concerns...
+import struct Foundation.UUID
 
 /// Represents the api routes that we will serve in the application.
 ///

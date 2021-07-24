@@ -1,4 +1,4 @@
-import Foundation
+import struct Foundation.UUID
 
 /// A simple user that we store in the database that only has a name and an id.
 public struct User: Codable, Identifiable, Equatable {
