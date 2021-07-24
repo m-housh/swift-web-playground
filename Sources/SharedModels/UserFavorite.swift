@@ -2,13 +2,13 @@ import Foundation
 
 /// A simple user favorite. This was created to have a simple `User` relation.
 public struct UserFavorite: Codable, Equatable, Identifiable {
-  
+
   /// The unique identifier of the favorite.
   public var id: UUID
-  
+
   /// The `User.ID` that the favorite belongs to.
   public var userId: User.ID
-  
+
   /// A description of the favorite.
   public var description: String
 

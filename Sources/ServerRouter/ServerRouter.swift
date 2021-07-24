@@ -31,7 +31,7 @@ public func router(
 
   // More routes could be added here.
   let routers: [Router<ApiRoute>] = [
-    
+
     // Handle the /users routes.
     .case(/ApiRoute.users)
       <¢> makeUserRouter(
@@ -46,7 +46,7 @@ public func router(
         path: pathPrefix.appending("favorites"),
         decoder: decoder,
         encoder: encoder
-      )
+      ),
   ]
 
   return routers.reduce(.empty, <|>)

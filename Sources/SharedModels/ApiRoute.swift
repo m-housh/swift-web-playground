@@ -9,7 +9,7 @@ public enum ApiRoute: Equatable {
 
   /// The `/users` routes.
   case users(UsersRoute)
-  
+
   /// The `/favorites` routes.
   case favorites(FavoritesRoute)
 
@@ -40,7 +40,7 @@ public enum ApiRoute: Equatable {
       }
     }
   }
-  
+
   /// Represents the `/favorites` CRUD routes.
   public enum FavoritesRoute: Equatable {
 
@@ -49,7 +49,7 @@ public enum ApiRoute: Equatable {
     case fetchId(id: UserFavorite.ID)
     case insert(InsertRequest)
     case update(id: UserFavorite.ID, update: UpdateRequest)
-    
+
     /// Represents the required properties to insert a new `UserFavorite`.
     public struct InsertRequest: Equatable, Codable {
 
