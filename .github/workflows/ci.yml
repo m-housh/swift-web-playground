@@ -23,10 +23,6 @@ jobs:
         make db
     - name: Run swift tests
       run: make test-swift
-    - name: Xcode tests
-      run: |
-        swift package generate-xcodeproj
-        xcodebuild -quiet -scheme swift-web-playground-Package -enableCodeCoverage YES build test
     - name: Upload coverage to Codecov.
       run: bash <(curl -s https://codecov.io/bash) -J 'swift-web-playground' -t ${{ secrets.CODE_COV_TOKEN }}
 

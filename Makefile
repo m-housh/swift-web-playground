@@ -1,7 +1,7 @@
 DOCC_BUILD_PATH := /tmp/swift-web-playground-build
 
 test-swift:
-	@swift test
+	@swift test --enable-code-coverage
 
 test-linux:
 	@docker run \
