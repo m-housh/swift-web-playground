@@ -66,3 +66,6 @@ To clean up the database and remove the created user when done, you can run the 
 make clean-db
 ```
 
+### Explore the api routes.
+
+There is a paw file in the repository.  If you don't currently use paw, you can download a free trial at [paw.cloud](https://paw.cloud) to explore the api routes on the server.
