@@ -3,16 +3,16 @@ import Foundation
 /// Represents errors that are thrown from the api. By wrapping an error that was thrown
 /// and allowing it to be codable to be sent for debugging.
 public struct ApiError: Codable, Error, Equatable, LocalizedError {
-  
+
   /// The wrapped error dump.
   public let errorDump: String
-  
+
   /// The file it was thrown from.
   public let file: String
-  
+
   /// The line it was thrown from.
   public let line: UInt
-  
+
   /// The error message.
   public let message: String
 

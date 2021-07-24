@@ -7,19 +7,19 @@ import Prelude
 /// Represents the routes that can be used in the `CrudRouter`.  This allows some routes to be disabled when creating
 /// a router.
 public enum CrudRouteType: CaseIterable, Equatable {
-  
+
   /// The delete route.
   case delete
-  
+
   /// The fetch route.
   case fetch
-  
+
   /// The fetch by id route.
   case fetchId
-  
+
   /// The insert route.
   case insert
-  
+
   /// The update route.
   case update
 }

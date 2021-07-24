@@ -2,10 +2,10 @@ import struct Foundation.UUID
 
 /// A simple user that we store in the database that only has a name and an id.
 public struct User: Codable, Identifiable, Equatable {
-  
+
   /// The unique identifier of the user.
   public var id: UUID
-  
+
   /// The user's name.
   public var name: String
 
