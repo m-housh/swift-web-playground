@@ -69,3 +69,7 @@ make clean-db
 ### Explore the api routes.
 
 There is a paw file in the repository.  If you don't currently use paw, you can download a free trial at [paw.cloud](https://paw.cloud) to explore the api routes on the server.
+
+## Associated gists.
+
+[Getting codecov/codecov-action to work](https://gist.github.com/m-housh/a1699d32477aefab85d185f4b677ea2e)
