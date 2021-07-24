@@ -28,10 +28,7 @@ jobs:
         swift package generate-xcodeproj
         xcodebuild -quiet -scheme swift-web-playground-Package -enableCodeCoverage YES build test
     - name: Upload coverage to Codecov.
-      uses: codecov/codecov-action@v2
-      with:
-        token: ${{ secrets.CODE_COV_TOKEN }}
-        verbose: true
+      run: bash <(curl -s https://codecov.io/bash) -J 'swift-web-playground' -t ${{ secrets.CODE_COV_TOKEN }}
 
   ubuntu:
     name: Ubuntu
