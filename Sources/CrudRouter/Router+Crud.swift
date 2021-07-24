@@ -4,7 +4,7 @@ import Foundation
 import NonEmpty
 import Prelude
 
-/// Extends the router type with default crud operations. And is convenient with building a router that combines multiple
+/// Extends the router type with default crud operations. And is convenient when building a router that combines multiple
 /// routers.
 extension Router {
 

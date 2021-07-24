@@ -8,7 +8,7 @@ import Prelude
 import ServerRouter
 import SiteMiddleware
 
-/// Responsible for loading the server environment and preparing database connections.
+/// Responsible for loading the server environment and dependencies prior to the server starting.
 ///
 /// - Parameters:
 ///   - eventLoopGroup: The event loop group to run actions on.

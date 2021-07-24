@@ -1,3 +1,5 @@
+DOCC_BUILD_PATH := /tmp/swift-web-playground-build
+
 test-swift:
 	@swift test
 
@@ -52,3 +54,15 @@ format:
 		--recursive \
 		./Package.swift \
 		./Sources/
+
+docc-docs:
+	@rm -rf $(DOCC_BUILD_PATH)
+	@xcodebuild docbuild \
+		-scheme swift-web-playground-Package \
+		-destination 'platform=OS X,arch=x86_64' \
+		-toolchain 5.5 \
+		-derivedDataPath $(DOCC_BUILD_PATH)
+		
+copy-docc-archives:
+	. Bootstrap/copy-docc-archives.sh
+	

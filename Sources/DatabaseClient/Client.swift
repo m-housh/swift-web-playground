@@ -6,7 +6,7 @@ import SharedModels
   import FoundationNetworking
 #endif
 
-/// Represents the database interactions.
+/// Represents all the database interactions for the application.
 public struct DatabaseClient {
 
   /// Actions that can be taken on the users table.

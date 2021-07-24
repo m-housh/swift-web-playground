@@ -6,29 +6,6 @@ import PostgresKit
 import Prelude
 import SharedModels
 
-/// Represents the table names in the database.
-enum Table: CustomStringConvertible, SQLExpression {
-
-  case users
-  case favorites
-
-  /// The database table name.
-  var tableName: String {
-    switch self {
-    case .users:
-      return "users"
-    case .favorites:
-      return "user_favorites"
-    }
-  }
-
-  var description: String { tableName }
-
-  func serialize(to serializer: inout SQLSerializer) {
-    SQLIdentifier(tableName).serialize(to: &serializer)
-  }
-}
-
 extension DatabaseClient {
 
   /// Creates the live implementation of a `DatabaseClient`.
@@ -84,6 +61,29 @@ extension DatabaseClient {
       try self.migrate().run.perform().unwrap()
     }
   #endif
+}
+
+/// Represents the table names in the database.
+enum Table: CustomStringConvertible, SQLExpression {
+
+  case users
+  case favorites
+
+  /// The database table name.
+  var tableName: String {
+    switch self {
+    case .users:
+      return "users"
+    case .favorites:
+      return "user_favorites"
+    }
+  }
+
+  var description: String { tableName }
+
+  func serialize(to serializer: inout SQLSerializer) {
+    SQLIdentifier(tableName).serialize(to: &serializer)
+  }
 }
 
 extension DatabaseClient.UserClient {

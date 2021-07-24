@@ -1,10 +1,19 @@
 import Foundation
 
+// TODO: This could possibly be used to generate database crud helpers, by passing a case path ? Although it does offer a separation of concerns...
+
+/// Represents the api routes that we will serve in the application.
+///
+///
 public enum ApiRoute: Equatable {
 
+  /// The `/users` routes.
   case users(UsersRoute)
+  
+  /// The `/favorites` routes.
   case favorites(FavoritesRoute)
 
+  /// Represents the `/users` CRUD routes.
   public enum UsersRoute: Equatable {
     case delete(id: User.ID)
     case fetch
@@ -12,6 +21,7 @@ public enum ApiRoute: Equatable {
     case insert(InsertRequest)
     case update(id: User.ID, update: UpdateRequest)
 
+    /// Represents the required properties to insert a new `User`.
     public struct InsertRequest: Equatable, Codable {
       public let name: String
 
@@ -21,6 +31,7 @@ public enum ApiRoute: Equatable {
     }
 
     // TODO: Make name non-optional
+    /// Represents the required properties to update a `User`.
     public struct UpdateRequest: Equatable, Codable {
       public let name: String?
 
@@ -29,7 +40,8 @@ public enum ApiRoute: Equatable {
       }
     }
   }
-
+  
+  /// Represents the `/favorites` CRUD routes.
   public enum FavoritesRoute: Equatable {
 
     case delete(id: UserFavorite.ID)
@@ -37,7 +49,8 @@ public enum ApiRoute: Equatable {
     case fetchId(id: UserFavorite.ID)
     case insert(InsertRequest)
     case update(id: UserFavorite.ID, update: UpdateRequest)
-
+    
+    /// Represents the required properties to insert a new `UserFavorite`.
     public struct InsertRequest: Equatable, Codable {
 
       public let description: String
@@ -50,6 +63,7 @@ public enum ApiRoute: Equatable {
     }
 
     // TODO: Make description non-optional
+    /// Represents the required properties to update a `UserFavorite`.
     public struct UpdateRequest: Equatable, Codable {
       public let description: String?
 

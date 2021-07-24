@@ -4,16 +4,28 @@ import Foundation
 import NonEmpty
 import Prelude
 
-/// Represents the routes that can be used in the `BasicCrudRouter`.  This allows some routes to be disabled when creating
+/// Represents the routes that can be used in the `CrudRouter`.  This allows some routes to be disabled when creating
 /// a router.
 public enum CrudRouteType: CaseIterable, Equatable {
+  
+  /// The delete route.
   case delete
+  
+  /// The fetch route.
   case fetch
+  
+  /// The fetch by id route.
   case fetchId
+  
+  /// The insert route.
   case insert
+  
+  /// The update route.
   case update
 }
 
+/// Holds on to common CRUD routes and can create a `Router` based on the supplied routes.  It also has the ability to disable / skip routes,
+/// even if they are supplied at initialization, when calling the `CrudRouter<Route>.router(for:)` method to create the actual `Router`
 public struct CrudRouter<Route> {
 
   /// The router to use for the delete route.
