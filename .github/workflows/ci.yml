@@ -23,6 +23,8 @@ jobs:
         make db
     - name: Run swift tests
       run: make test-swift
+    - name: Make code coverage report.
+      run: make code-cov
     - name: Upload coverage to Codecov.
       uses: codecov/codecov-action@v2
       with:

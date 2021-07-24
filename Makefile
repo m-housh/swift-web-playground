@@ -1,4 +1,9 @@
 DOCC_BUILD_PATH := /tmp/swift-web-playground-build
+LLVM_PATH := /usr/local/opt/llvm/bin/llvm-cov
+BIN_PATH = $(shell swift build --show-bin-path)
+XCTEST_PATH = $(shell find $(BIN_PATH) -name '*.xctest')
+COV_BIN = $(XCTEST_PATH)/Contents/MacOs/$(shell basename $(XCTEST_PATH) .xctest)
+COV_OUTPUT_PATH = "/tmp/swift-web-playground.lcov"
 
 test-swift:
 	@swift test --enable-code-coverage
@@ -66,8 +71,17 @@ docc-docs:
 copy-docc-archives:
 	. Bootstrap/copy-docc-archives.sh
 	
-code-cov:
-	test -f helpers/code-cov.sh && . helpers/code-cov.sh
+check-for-llvm:
+	test -f $(LLVM_PATH) || brew install llvm
+	
+code-cov: check-for-llvm
+	rm -rf $(COV_OUTPUT_PATH)
+	$(LLVM_PATH) export \
+		$(COV_BIN) \
+		-instr-profile=.build/debug/codecov/default.profdata \
+		-ignore-filename-regex=".build|Tests" \
+		-format lcov > $(COV_OUTPUT_PATH)
+		
 	
 code-cov-report:
 	test -f helpers/code-cov-report.sh && . helpers/code-cov-report.sh
