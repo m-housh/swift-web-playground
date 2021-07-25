@@ -70,6 +70,60 @@ make clean-db
 
 There is a paw file in the repository.  If you don't currently use paw, you can download a free trial at [paw.cloud](https://paw.cloud) to explore the api routes on the server.
 
+There are basically 2 routes that the api currently handles which are `/api/users` and `/api/favorites`.
+Where the users data structure consists of only a `name` and the favorites are a user relation that only
+consists of a `description`.
+
+Below are some examples of using [httpie](https://httpie.io) and interacting with the api on the default
+port, however you could use `curl` or the existing `paw` file as well.
+
+#### Create a new user
+```
+http :8080/api/users name="blob"
+```
+
+#### List all users.
+```
+http :8080/api/users
+```
+
+#### Update a user.
+```
+http :8080/api/users name="blob-sr"
+```
+
+#### Delete a user.
+```
+http DELETE :8080/api/users/78976CC6-EA94-11EB-AE9D-8FF1032E6348
+```
+
+#### Create a new user favorite
+```
+http :8080/api/favorites userId=78976CC6-EA94-11EB-AE9D-8FF1032E6348 description="Tacos"
+```
+
+#### Fetch all favorites
+```
+http :8080/api/favorites
+```
+
+#### Fetch all favorites for a user
+```
+http :8080/api/favorites userId==78976CC6-EA94-11EB-AE9D-8FF1032E6348
+```
+
+This is equivalent to the following query `/api/favorites?userId=78976CC6-EA94-11EB-AE9D-8FF1032E6348`
+
+#### Update a favorite
+```
+http :8080/api/favorites/4A52CB80-EA94-11EB-AE9D-E30362C9E57B description="Pizza"
+```
+
+#### Delete a favorite
+```
+http DELETE :8080/api/favorites/4A52CB80-EA94-11EB-AE9D-E30362C9E57B
+```
+
 ## The long story.
 My normal profession is as a 3rd generation owner of a small HVAC company.  Since taking over the company
 I have developed an interest in software development and have several internal services that I run / maintain.
