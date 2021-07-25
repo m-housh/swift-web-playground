@@ -6,7 +6,7 @@ import Foundation
 ///
 /// Adding new values to this struct, also requires them to be added to the `Bootstrap/playground-env-example` file.
 ///
-public struct EnvVars: Codable {
+public struct EnvVars: Codable, Equatable {
 
   /// The application environment, i.e. (development / testing, etc.)
   public var appEnv: AppEnv
@@ -47,7 +47,7 @@ public struct EnvVars: Codable {
   }
 
   /// Represents the application environment.
-  public enum AppEnv: String, Codable {
+  public enum AppEnv: String, Codable, Equatable {
     case development
     case testing
   }

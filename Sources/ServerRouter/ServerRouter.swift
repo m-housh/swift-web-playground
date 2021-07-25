@@ -1,7 +1,6 @@
 import ApplicativeRouter
 import CasePaths
 import CrudRouter
-import DatabaseClient
 import Foundation
 import NonEmpty
 import Prelude

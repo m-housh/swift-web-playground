@@ -280,16 +280,6 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "RouterTests"
-               BuildableName = "RouterTests"
-               BlueprintName = "RouterTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "DatabaseLiveTests"
                BuildableName = "DatabaseLiveTests"
                BlueprintName = "DatabaseLiveTests"
@@ -303,6 +293,26 @@
                BlueprintIdentifier = "CrudRouterTests"
                BuildableName = "CrudRouterTests"
                BlueprintName = "CrudRouterTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EnvVarsTests"
+               BuildableName = "EnvVarsTests"
+               BlueprintName = "EnvVarsTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ServerRouterTests"
+               BuildableName = "ServerRouterTests"
+               BlueprintName = "ServerRouterTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

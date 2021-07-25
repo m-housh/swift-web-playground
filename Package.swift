@@ -72,6 +72,9 @@ let package = Package(
     .target(
       name: "EnvVars",
       dependencies: []),
+    .testTarget(
+      name: "EnvVarsTests",
+      dependencies: ["EnvVars"]),
     .target(
       name: "server",
       dependencies: [
@@ -94,12 +97,11 @@ let package = Package(
       dependencies: [
         "SharedModels",
         "CrudRouter",
-        "DatabaseClient",  // TODO: Remove this dependency if possible
         .product(name: "ApplicativeRouter", package: "Web"),
         .product(name: "CasePaths", package: "swift-case-paths"),
       ]),
     .testTarget(
-      name: "RouterTests",
+      name: "ServerRouterTests",
       dependencies: [
         "ServerRouter",
         .product(name: "ApplicativeRouter", package: "Web"),
