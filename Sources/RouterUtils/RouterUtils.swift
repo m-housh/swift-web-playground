@@ -13,10 +13,10 @@ extension Router {
   ///   - next: The router used to parse / create the input to embed in the case path.
   public static func `case`<B>(
     _ casePath: CasePath<A, B>,
-    _ next: Router<B>
+    chainingTo router: Router<B>
   ) -> Router {
     PartialIso.case(casePath)
-      <¢> next
+      <¢> router
   }
 
   /// Useful when embedding a router inside of another one.
@@ -26,9 +26,25 @@ extension Router {
   ///   - next: The router used to parse / create the input to embed in the case path.
   public static func `case`<B>(
     _ casePath: CasePath<A, B>,
-    _ next: @escaping () -> Router<B>
+    chainingTo router: @escaping () -> Router<B>
   ) -> Router {
-    .case(casePath, next())
+    .case(casePath, chainingTo: router())
+  }
+  
+  /// Convenience for creating a router out of an array of routers that do the actual request handling.
+  ///
+  /// - Parameters:
+  ///    - routers: The routers responsible for handling the routing.
+  public static func chaining<A>(_ routers: [Router<A>]) -> Router<A> {
+    routers.reduce(.empty, <|>)
+  }
+  
+  /// Convenience for creating a router out of an array of routers that do the actual request handling.
+  ///
+  /// - Parameters:
+  ///    - routers: The routers responsible for handling the routing.
+  public static func chaining<A>(_ routers: Router<A>...) -> Router<A> {
+    chaining(routers)
   }
 
   /// Create a router that matches an incoming DELETE request.

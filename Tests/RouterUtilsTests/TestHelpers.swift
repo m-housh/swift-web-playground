@@ -45,7 +45,7 @@ class RouterUtilsTestCase: XCTestCase {
     
     let path: NonEmptyArray<String> = .init("/test")
     
-    let routers: [Router<TestRoute>] = [
+    self.router = .chaining(
       .delete(/TestRoute.delete(id:), at: path) {
         pathParam(.int)
       },
@@ -61,14 +61,13 @@ class RouterUtilsTestCase: XCTestCase {
           queryParam("foo", opt(.string))
         }
       }
-//
+      //
       
-//      .case(/TestRoute.fetchWithCodableParam)
-//        <¢> .fetch(/RouteWithCodableParam.fetch, path: .init("test", "codable"))
+      //      .case(/TestRoute.fetchWithCodableParam)
+      //        <¢> .fetch(/RouteWithCodableParam.fetch, path: .init("test", "codable"))
       
-    ]
+    )
     
-    self.router = routers.reduce(.empty, <|>)
   }
   
 }

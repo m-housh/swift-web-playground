@@ -29,7 +29,7 @@ public func router(
 ) -> Router<ApiRoute> {
 
   // More routes could be added here.
-  .matching(
+  .chaining(
 
     // Handle the /users routes.
     .case(/ApiRoute.users) {
@@ -62,7 +62,7 @@ private func makeUserRouter(
   decoder: JSONDecoder,
   encoder: JSONEncoder
 ) -> Router<ApiRoute.UsersRoute> {
-  .matching(
+  .chaining(
     .delete(/ApiRoute.UsersRoute.delete, at: path) {
       pathParam(.uuid)
     },
@@ -92,7 +92,7 @@ private func makeFavoriteRouter(
   decoder: JSONDecoder,
   encoder: JSONEncoder
 ) -> Router<ApiRoute.FavoritesRoute> {
-  .matching(
+  .chaining(
     .delete(/ApiRoute.FavoritesRoute.delete, at: path) {
       pathParam(.uuid)
     },
