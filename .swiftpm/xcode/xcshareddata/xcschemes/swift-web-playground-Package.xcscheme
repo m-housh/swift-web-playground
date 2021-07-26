@@ -304,16 +304,6 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CrudRouterTests"
-               BuildableName = "CrudRouterTests"
-               BlueprintName = "CrudRouterTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "EnvVarsTests"
                BuildableName = "EnvVarsTests"
                BlueprintName = "EnvVarsTests"

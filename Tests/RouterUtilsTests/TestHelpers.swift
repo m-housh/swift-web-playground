@@ -1,4 +1,5 @@
 import XCTest
+import CasePaths
 import RouterUtils
 import NonEmpty
 import Prelude

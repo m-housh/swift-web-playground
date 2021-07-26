@@ -96,8 +96,10 @@ let package = Package(
       name: "ServerRouter",
       dependencies: [
         "SharedModels",
+        "RouterUtils",
         .product(name: "ApplicativeRouter", package: "Web"),
         .product(name: "CasePaths", package: "swift-case-paths"),
+        .product(name: "NonEmpty", package: "swift-nonempty"),
       ]),
     .testTarget(
       name: "ServerRouterTests",

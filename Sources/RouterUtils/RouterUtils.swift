@@ -1,6 +1,6 @@
-@_exported import ApplicativeRouter
-@_exported import CasePaths
-@_exported import Foundation
+import ApplicativeRouter
+import CasePaths
+import Foundation
 import NonEmpty
 import Prelude
 
@@ -75,14 +75,20 @@ public extension Router {
   ) -> Router {
     .init(casePath, at: path, method: .post, params: params)
   }
+
+  static func matching<A>(_ routers: [Router<A>]) -> Router<A> {
+    routers.reduce(.empty, <|>)
+  }
+
+  static func matching<A>(_ routers: Router<A>...) -> Router<A> {
+    matching(routers)
+  }
 }
 
 // MARK: - Helpers
-
-// Router currently does not have any public initializers, so keep this internal.
-
 extension Router {
   
+  // Router currently does not have any public initializers, so keep this internal.
   init<B>(
     _ casePath: CasePath<A, B>,
     at path: NonEmptyArray<String>? = nil,

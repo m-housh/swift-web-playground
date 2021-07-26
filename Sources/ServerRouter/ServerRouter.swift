@@ -1,5 +1,7 @@
-import Foundation
+import ApplicativeRouter
+import CasePaths
 import NonEmpty
+import Foundation
 import Prelude
 import RouterUtils
 import SharedModels
@@ -58,7 +60,7 @@ private func makeUserRouter(
   decoder: JSONDecoder,
   encoder: JSONEncoder
 ) -> Router<ApiRoute.UsersRoute> {
-  let routers: [Router<ApiRoute.UsersRoute>] = [
+  .matching(
     .delete(/ApiRoute.UsersRoute.delete, at: path) {
       pathParam(.uuid)
     },
@@ -73,9 +75,7 @@ private func makeUserRouter(
       pathParam(.uuid) <%>
         jsonBody(ApiRoute.UsersRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
     }
-  ]
-  
-  return routers.reduce(.empty, <|>)
+  )
 }
 
 /// Creates the router that handles all the CRUD routes for the `/favorites` routes.
@@ -89,7 +89,7 @@ private func makeFavoriteRouter(
   decoder: JSONDecoder,
   encoder: JSONEncoder
 ) -> Router<ApiRoute.FavoritesRoute> {
-  let routers: [Router<ApiRoute.FavoritesRoute>] = [
+  .matching(
     .delete(/ApiRoute.FavoritesRoute.delete, at: path) {
       pathParam(.uuid)
     },
@@ -106,9 +106,7 @@ private func makeFavoriteRouter(
       pathParam(.uuid) <%>
         jsonBody(ApiRoute.FavoritesRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
     }
-  ]
-  
-  return routers.reduce(.empty, <|>)
+  )
 }
 
 extension NonEmpty where Collection == [String] {

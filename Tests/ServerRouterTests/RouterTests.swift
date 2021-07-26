@@ -3,7 +3,7 @@ import Optics
 import Prelude
 import XCTest
 
-@testable import CrudRouter
+@testable import RouterUtils
 @testable import ServerRouter
 @testable import SharedModels
 

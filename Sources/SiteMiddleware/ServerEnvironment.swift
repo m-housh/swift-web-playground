@@ -1,5 +1,4 @@
 import ApplicativeRouter
-import CrudRouter
 import DatabaseClient
 import EnvVars
 import ServerRouter
