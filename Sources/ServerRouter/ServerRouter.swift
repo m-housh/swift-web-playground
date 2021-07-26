@@ -1,7 +1,7 @@
 import ApplicativeRouter
 import CasePaths
-import NonEmpty
 import Foundation
+import NonEmpty
 import Prelude
 import RouterUtils
 import SharedModels
@@ -32,18 +32,22 @@ public func router(
   let routers: [Router<ApiRoute>] = [
 
     // Handle the /users routes.
-    .case(/ApiRoute.users) { makeUserRouter(
+    .case(/ApiRoute.users) {
+      makeUserRouter(
         path: pathPrefix.appending("users"),
         decoder: decoder,
         encoder: encoder
-    )},
+      )
+    },
 
     // Handle the /favorites routes.
-    .case(/ApiRoute.favorites) { makeFavoriteRouter(
+    .case(/ApiRoute.favorites) {
+      makeFavoriteRouter(
         path: pathPrefix.appending("favorites"),
         decoder: decoder,
         encoder: encoder
-    )},
+      )
+    },
   ]
 
   return routers.reduce(.empty, <|>)
@@ -72,8 +76,8 @@ private func makeUserRouter(
       jsonBody(ApiRoute.UsersRoute.InsertRequest.self, encoder: encoder, decoder: decoder)
     },
     .post(/ApiRoute.UsersRoute.update, at: path) {
-      pathParam(.uuid) <%>
-        jsonBody(ApiRoute.UsersRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
+      pathParam(.uuid)
+        <%> jsonBody(ApiRoute.UsersRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
     }
   )
 }
@@ -103,8 +107,8 @@ private func makeFavoriteRouter(
       jsonBody(ApiRoute.FavoritesRoute.InsertRequest.self, encoder: encoder, decoder: decoder)
     },
     .post(/ApiRoute.FavoritesRoute.update, at: path) {
-      pathParam(.uuid) <%>
-        jsonBody(ApiRoute.FavoritesRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
+      pathParam(.uuid)
+        <%> jsonBody(ApiRoute.FavoritesRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
     }
   )
 }
