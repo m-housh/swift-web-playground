@@ -4,7 +4,6 @@ import Prelude
 import XCTest
 
 @testable import CrudRouter
-@testable import DatabaseClient
 @testable import ServerRouter
 @testable import SharedModels
 

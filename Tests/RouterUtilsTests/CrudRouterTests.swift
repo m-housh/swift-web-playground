@@ -1,11 +1,14 @@
 import XCTest
-@testable import CrudRouter
+import NonEmpty
+import Prelude
+
+@testable import RouterUtils
 
 #if canImport(FoundationNetworking)
   import FoundationNetworking
 #endif
 
-final class CrudRouterTests: CrudRouterTestCase {
+final class RouterUtilsTests: RouterUtilsTestCase {
   
   func testDeleteRoute() {
     let route = TestRoute.delete(id: 1)

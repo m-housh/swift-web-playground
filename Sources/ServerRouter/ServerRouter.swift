@@ -1,9 +1,7 @@
-import ApplicativeRouter
-import CasePaths
-import CrudRouter
 import Foundation
 import NonEmpty
 import Prelude
+import RouterUtils
 import SharedModels
 
 #if canImport(FoundationNetworking)
@@ -32,20 +30,18 @@ public func router(
   let routers: [Router<ApiRoute>] = [
 
     // Handle the /users routes.
-    .case(/ApiRoute.users)
-      <¢> makeUserRouter(
+    .case(/ApiRoute.users) { makeUserRouter(
         path: pathPrefix.appending("users"),
         decoder: decoder,
         encoder: encoder
-      ),
+    )},
 
     // Handle the /favorites routes.
-    .case(/ApiRoute.favorites)
-      <¢> makeFavoriteRouter(
+    .case(/ApiRoute.favorites) { makeFavoriteRouter(
         path: pathPrefix.appending("favorites"),
         decoder: decoder,
         encoder: encoder
-      ),
+    )},
   ]
 
   return routers.reduce(.empty, <|>)
@@ -62,25 +58,24 @@ private func makeUserRouter(
   decoder: JSONDecoder,
   encoder: JSONEncoder
 ) -> Router<ApiRoute.UsersRoute> {
-  CrudRouter(
-    delete: Router.delete(/ApiRoute.UsersRoute.delete, path: path, idIso: .uuid),
-    fetch: Router.fetch(/ApiRoute.UsersRoute.fetch, path: path),
-    fetchOne: Router.fetchId(/ApiRoute.UsersRoute.fetchId(id:), path: path, idIso: .uuid),
-    insert: Router.insert(
-      /ApiRoute.UsersRoute.insert,
-      path: path,
-      decoder: decoder,
-      encoder: encoder
-    ),
-    update: Router.update(
-      /ApiRoute.UsersRoute.update,
-      path: path,
-      idIso: .uuid,
-      decoder: decoder,
-      encoder: encoder
-    )
-  )
-  .router()
+  let routers: [Router<ApiRoute.UsersRoute>] = [
+    .delete(/ApiRoute.UsersRoute.delete, at: path) {
+      pathParam(.uuid)
+    },
+    .get(/ApiRoute.UsersRoute.fetch, at: path),
+    .get(/ApiRoute.UsersRoute.fetchId(id:), at: path) {
+      pathParam(.uuid)
+    },
+    .post(/ApiRoute.UsersRoute.insert, at: path) {
+      jsonBody(ApiRoute.UsersRoute.InsertRequest.self, encoder: encoder, decoder: decoder)
+    },
+    .post(/ApiRoute.UsersRoute.update, at: path) {
+      pathParam(.uuid) <%>
+        jsonBody(ApiRoute.UsersRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
+    }
+  ]
+  
+  return routers.reduce(.empty, <|>)
 }
 
 /// Creates the router that handles all the CRUD routes for the `/favorites` routes.
@@ -94,29 +89,26 @@ private func makeFavoriteRouter(
   decoder: JSONDecoder,
   encoder: JSONEncoder
 ) -> Router<ApiRoute.FavoritesRoute> {
-  CrudRouter(
-    delete: Router.delete(/ApiRoute.FavoritesRoute.delete, path: path, idIso: .uuid),
-    fetch: Router.fetch(
-      /ApiRoute.FavoritesRoute.fetch(userId:),
-      path: path,
-      param: (key: "userId", iso: opt(.uuid))
-    ),
-    fetchOne: Router.fetchId(/ApiRoute.FavoritesRoute.fetchId(id:), path: path, idIso: .uuid),
-    insert: Router.insert(
-      /ApiRoute.FavoritesRoute.insert,
-      path: path,
-      decoder: decoder,
-      encoder: encoder
-    ),
-    update: Router.update(
-      /ApiRoute.FavoritesRoute.update,
-      path: path,
-      idIso: .uuid,
-      decoder: decoder,
-      encoder: encoder
-    )
-  )
-  .router()
+  let routers: [Router<ApiRoute.FavoritesRoute>] = [
+    .delete(/ApiRoute.FavoritesRoute.delete, at: path) {
+      pathParam(.uuid)
+    },
+    .get(/ApiRoute.FavoritesRoute.fetch(userId:), at: path) {
+      queryParam("userId", opt(.uuid))
+    },
+    .get(/ApiRoute.FavoritesRoute.fetchId(id:), at: path) {
+      pathParam(.uuid)
+    },
+    .post(/ApiRoute.FavoritesRoute.insert, at: path) {
+      jsonBody(ApiRoute.FavoritesRoute.InsertRequest.self, encoder: encoder, decoder: decoder)
+    },
+    .post(/ApiRoute.FavoritesRoute.update, at: path) {
+      pathParam(.uuid) <%>
+        jsonBody(ApiRoute.FavoritesRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
+    }
+  ]
+  
+  return routers.reduce(.empty, <|>)
 }
 
 extension NonEmpty where Collection == [String] {

@@ -172,7 +172,7 @@ This is just some synactic sugar that came out of wanting to use more of the `va
 somewhat easily developed into it's own package or dropped into another project for easier creation of 
 CRUD interactions with the database.
 
-### CrudRouter
+### RouterUtils
 
 This is some synactic sugar around the pointfree `Router` type. This should also be easily dropped into a project
 or moved to it's own package.  This library integrates the [pointfreeco/swift-case-paths](https://github.com/pointfreeco/swift-case-paths), to allow the router to be generic over

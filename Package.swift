@@ -8,11 +8,11 @@ let package = Package(
     .macOS(.v10_15)
   ],
   products: [
-    .library(name: "CrudRouter", targets: ["CrudRouter"]),
     .library(name: "DatabaseClient", targets: ["DatabaseClient"]),
     .library(name: "DatabaseClientLive", targets: ["DatabaseClientLive"]),
     .library(name: "DatabaseCrudHelpers", targets: ["DatabaseCrudHelpers"]),
     .library(name: "EnvVars", targets: ["EnvVars"]),
+    .library(name: "RouterUtils", targets: ["RouterUtils"]),
     .library(name: "ServerRouter", targets: ["ServerRouter"]),
     .executable(name: "server", targets: ["server"]),
     .library(name: "ServerBootstrap", targets: ["ServerBootstrap"]),
@@ -31,17 +31,6 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-nonempty.git", from: "0.3.1"),
   ],
   targets: [
-    .target(
-      name: "CrudRouter",
-      dependencies: [
-        .product(name: "ApplicativeRouter", package: "Web"),
-        .product(name: "CasePaths", package: "swift-case-paths"),
-        .product(name: "NonEmpty", package: "swift-nonempty"),
-      ]),
-    .testTarget(
-      name: "CrudRouterTests",
-      dependencies: ["CrudRouter"]
-    ),
     .target(
       name: "DatabaseClient",
       dependencies: [
@@ -76,6 +65,17 @@ let package = Package(
       name: "EnvVarsTests",
       dependencies: ["EnvVars"]),
     .target(
+      name: "RouterUtils",
+      dependencies: [
+        .product(name: "ApplicativeRouter", package: "Web"),
+        .product(name: "CasePaths", package: "swift-case-paths"),
+        .product(name: "NonEmpty", package: "swift-nonempty"),
+      ]),
+    .testTarget(
+      name: "RouterUtilsTests",
+      dependencies: ["RouterUtils"]
+    ),
+    .target(
       name: "server",
       dependencies: [
         "ServerBootstrap",
@@ -96,7 +96,6 @@ let package = Package(
       name: "ServerRouter",
       dependencies: [
         "SharedModels",
-        "CrudRouter",
         .product(name: "ApplicativeRouter", package: "Web"),
         .product(name: "CasePaths", package: "swift-case-paths"),
       ]),

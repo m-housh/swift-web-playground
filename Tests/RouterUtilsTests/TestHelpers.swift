@@ -1,7 +1,8 @@
 import XCTest
-import CrudRouter
+import RouterUtils
 import NonEmpty
 import Prelude
+import ApplicativeRouter
 
 enum TestRoute: Equatable {
   case delete(id: Int)
@@ -34,7 +35,7 @@ enum RouteWithCodableParam: Equatable {
   }
 }
 
-class CrudRouterTestCase: XCTestCase {
+class RouterUtilsTestCase: XCTestCase {
   
   var router: Router<TestRoute>!
   
@@ -44,16 +45,25 @@ class CrudRouterTestCase: XCTestCase {
     let path: NonEmptyArray<String> = .init("/test")
     
     let routers: [Router<TestRoute>] = [
-      .delete(/TestRoute.delete(id:), path: path, idIso: .int),
-      .fetch(/TestRoute.fetchAll, path: path),
-      .insert(/TestRoute.insert, path: path),
-      .update(/TestRoute.update(id:update:), path: path, idIso: .int),
+      .delete(/TestRoute.delete(id:), at: path) {
+        pathParam(.int)
+      },
+      .get(/TestRoute.fetchAll, at: path),
+      .post(/TestRoute.insert, at: path) {
+        jsonBody(TestRoute.InsertRequest.self)
+      },
+      .post(/TestRoute.update(id:update:), at: path) {
+        pathParam(.int) <%> jsonBody(TestRoute.UpdateRequest.self)
+      },
+      .get(/TestRoute.fetchWithParam, at: .init("test", "param")) {
+        .case(/RouteWithParam.fetch(foo:)) {
+          queryParam("foo", opt(.string))
+        }
+      }
+//
       
-      .case(/TestRoute.fetchWithParam)
-        <¢> .fetch(/RouteWithParam.fetch, path: .init("test", "param"), param: (key: "foo", iso: opt(.string))),
-      
-      .case(/TestRoute.fetchWithCodableParam)
-        <¢> .fetch(/RouteWithCodableParam.fetch, path: .init("test", "codable"))
+//      .case(/TestRoute.fetchWithCodableParam)
+//        <¢> .fetch(/RouteWithCodableParam.fetch, path: .init("test", "codable"))
       
     ]
     
