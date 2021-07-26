@@ -18,7 +18,7 @@ extension Router {
     PartialIso.case(casePath)
       <¢> next
   }
-  
+
   /// Useful when embedding a router inside of another one.
   ///
   /// - Parameters:
@@ -30,7 +30,7 @@ extension Router {
   ) -> Router {
     .case(casePath, next())
   }
-  
+
   /// Create a router that matches an incoming DELETE request.
   ///
   /// - Parameters:
@@ -44,7 +44,7 @@ extension Router {
   ) -> Router {
     Router(casePath, at: path, method: .delete, chainingTo: router)
   }
-  
+
   /// Create a router that matches an incoming DELETE request.
   ///
   /// - Parameters:
@@ -58,7 +58,7 @@ extension Router {
   ) -> Router {
     Router(casePath, at: path, method: .delete, chainingTo: router())
   }
-  
+
   /// Create a router that matches an incoming GET request.
   ///
   /// - Parameters:
@@ -84,7 +84,7 @@ extension Router {
   ) -> Router {
     Router(casePath, at: path, method: .get, chainingTo: router())
   }
-  
+
   /// Create a router that matches an incoming GET request.
   ///
   /// - Parameters:
@@ -98,7 +98,7 @@ extension Router {
   ) -> Router {
     Router(casePath, at: path, method: .get, chainingTo: router)
   }
-  
+
   /// Convenience for creating a router out of an array of routers that do the actual request handling.
   ///
   /// - Parameters:
@@ -106,7 +106,7 @@ extension Router {
   public static func matching<A>(_ routers: [Router<A>]) -> Router<A> {
     routers.reduce(.empty, <|>)
   }
-  
+
   /// Convenience for creating a router out of an array of routers that do the actual request handling.
   ///
   /// - Parameters:
@@ -114,7 +114,7 @@ extension Router {
   public static func matching<A>(_ routers: Router<A>...) -> Router<A> {
     matching(routers)
   }
-  
+
   /// Create a router that matches an incoming POST request.
   ///
   /// - Parameters:
@@ -128,7 +128,7 @@ extension Router {
   ) -> Router {
     Router(casePath, at: path, method: .post, chainingTo: router())
   }
-  
+
   /// Create a router that matches an incoming POST request.
   ///
   /// - Parameters:
