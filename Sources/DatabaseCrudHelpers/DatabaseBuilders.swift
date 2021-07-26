@@ -2,6 +2,7 @@ import Foundation
 import NonEmpty
 import PostgresKit
 
+/// A namespace for creating common sql builders, that can be extended to fit the needs of the caller.
 public enum DatabaseBuilders {
 
   /// Creates an `SQLDeleteBuilder` that can be extended or executed later.

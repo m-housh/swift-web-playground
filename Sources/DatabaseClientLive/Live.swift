@@ -6,6 +6,7 @@ import PostgresKit
 import Prelude
 import SharedModels
 
+/// Creates the live implementation of a `DatabaseClient`.
 extension DatabaseClient {
 
   /// Creates the live implementation of a `DatabaseClient`.
@@ -63,10 +64,15 @@ extension DatabaseClient {
   #endif
 }
 
+// MARK: - Helpers
+
 /// Represents the table names in the database.
 enum Table: CustomStringConvertible, SQLExpression {
 
+  /// The users table.
   case users
+  
+  /// The user favorites table.
   case favorites
 
   /// The database table name.
@@ -88,6 +94,10 @@ enum Table: CustomStringConvertible, SQLExpression {
 
 extension DatabaseClient.UserClient {
 
+  /// Create a new database user client.
+  ///
+  /// - Parameters:
+  ///   - pool: The event loop connection pool, used to connect to the database.
   init(pool: EventLoopGroupConnectionPool<PostgresConnectionSource>) {
     self.init(
       delete: DatabaseCrud.delete(from: Table.users, on: pool),
@@ -100,7 +110,10 @@ extension DatabaseClient.UserClient {
 }
 
 extension DatabaseClient.UserFavoriteClient {
-
+  /// Create a new database user favorites client.
+  ///
+  /// - Parameters:
+  ///   - pool: The event loop connection pool, used to connect to the database.
   init(pool: EventLoopGroupConnectionPool<PostgresConnectionSource>) {
     self.init(
       delete: DatabaseCrud.delete(from: Table.favorites, on: pool),

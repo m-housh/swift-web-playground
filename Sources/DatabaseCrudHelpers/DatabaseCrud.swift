@@ -2,6 +2,7 @@ import Either
 import Foundation
 import PostgresKit
 
+/// A namespace for creating common database crud operations, used in database clients.
 public enum DatabaseCrud {
 
   /// Creates a function that can be used to delete a model by id from the database.

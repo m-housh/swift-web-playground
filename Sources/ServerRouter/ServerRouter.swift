@@ -27,91 +27,60 @@ public func router(
   decoder: JSONDecoder,
   encoder: JSONEncoder
 ) -> Router<ApiRoute> {
+  
+  let usersPath = pathPrefix.appending("users")
+  let favoritesPath = pathPrefix.appending("favorites")
 
   // More routes could be added here.
-  .chaining(
+  return .chaining(
 
     // Handle the /users routes.
     .case(/ApiRoute.users) {
-      makeUserRouter(
-        path: pathPrefix.appending("users"),
-        decoder: decoder,
-        encoder: encoder
+      .chaining(
+        .delete(/ApiRoute.UsersRoute.delete, at: usersPath) {
+          pathParam(.uuid)
+        },
+        .get(/ApiRoute.UsersRoute.fetch, at: usersPath),
+        .get(/ApiRoute.UsersRoute.fetchId(id:), at: usersPath) {
+          pathParam(.uuid)
+        },
+        .post(/ApiRoute.UsersRoute.insert, at: usersPath) {
+          jsonBody(ApiRoute.UsersRoute.InsertRequest.self, encoder: encoder, decoder: decoder)
+        },
+        .post(/ApiRoute.UsersRoute.update, at: usersPath) {
+          pathParam(.uuid) {
+            jsonBody(ApiRoute.UsersRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
+          }
+        }
       )
     },
 
     // Handle the /favorites routes.
     .case(/ApiRoute.favorites) {
-      makeFavoriteRouter(
-        path: pathPrefix.appending("favorites"),
-        decoder: decoder,
-        encoder: encoder
+      .chaining(
+        .delete(/ApiRoute.FavoritesRoute.delete, at: favoritesPath) {
+          pathParam(.uuid)
+        },
+        .get(/ApiRoute.FavoritesRoute.fetch(userId:), at: favoritesPath) {
+          queryParam("userId", opt(.uuid))
+        },
+        .get(/ApiRoute.FavoritesRoute.fetchId(id:), at: favoritesPath) {
+          pathParam(.uuid)
+        },
+        .post(/ApiRoute.FavoritesRoute.insert, at: favoritesPath) {
+          jsonBody(ApiRoute.FavoritesRoute.InsertRequest.self, encoder: encoder, decoder: decoder)
+        },
+        .post(/ApiRoute.FavoritesRoute.update, at: favoritesPath) {
+          pathParam(.uuid) {
+            jsonBody(ApiRoute.FavoritesRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
+          }
+        }
       )
     }
   )
 }
 
-/// Creates the router that handles all the CRUD routes for the `/users` routes.
-///
-/// - Parameters:
-///   - path: The path to match on, should be fully put together with the prefix if applicable.
-///   - decoder: The json decoder to use.
-///   - encoder: The json encoder to use.
-private func makeUserRouter(
-  path: NonEmptyArray<String>,
-  decoder: JSONDecoder,
-  encoder: JSONEncoder
-) -> Router<ApiRoute.UsersRoute> {
-  .chaining(
-    .delete(/ApiRoute.UsersRoute.delete, at: path) {
-      pathParam(.uuid)
-    },
-    .get(/ApiRoute.UsersRoute.fetch, at: path),
-    .get(/ApiRoute.UsersRoute.fetchId(id:), at: path) {
-      pathParam(.uuid)
-    },
-    .post(/ApiRoute.UsersRoute.insert, at: path) {
-      jsonBody(ApiRoute.UsersRoute.InsertRequest.self, encoder: encoder, decoder: decoder)
-    },
-    .post(/ApiRoute.UsersRoute.update, at: path) {
-      pathParam(.uuid) {
-        jsonBody(ApiRoute.UsersRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
-      }
-    }
-  )
-}
-
-/// Creates the router that handles all the CRUD routes for the `/favorites` routes.
-///
-/// - Parameters:
-///   - path: The path to match on, should be fully put together with the prefix if applicable.
-///   - decoder: The json decoder to use.
-///   - encoder: The json encoder to use.
-private func makeFavoriteRouter(
-  path: NonEmptyArray<String>,
-  decoder: JSONDecoder,
-  encoder: JSONEncoder
-) -> Router<ApiRoute.FavoritesRoute> {
-  .chaining(
-    .delete(/ApiRoute.FavoritesRoute.delete, at: path) {
-      pathParam(.uuid)
-    },
-    .get(/ApiRoute.FavoritesRoute.fetch(userId:), at: path) {
-      queryParam("userId", opt(.uuid))
-    },
-    .get(/ApiRoute.FavoritesRoute.fetchId(id:), at: path) {
-      pathParam(.uuid)
-    },
-    .post(/ApiRoute.FavoritesRoute.insert, at: path) {
-      jsonBody(ApiRoute.FavoritesRoute.InsertRequest.self, encoder: encoder, decoder: decoder)
-    },
-    .post(/ApiRoute.FavoritesRoute.update, at: path) {
-      pathParam(.uuid) {
-        jsonBody(ApiRoute.FavoritesRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
-      }
-    }
-  )
-}
+// MARK: - Helpers
 
 extension NonEmpty where Collection == [String] {
 

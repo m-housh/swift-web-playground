@@ -2,7 +2,7 @@ import Foundation
 import HttpPipeline
 import Prelude
 
-/// Sends / encodes json data as the response type from incoming requests.
+/// Sends / encodes json data as the response type from incoming requests, finalizing the response.
 func respondJson<A: Encodable>() -> (Conn<HeadersOpen, A>) -> IO<Conn<ResponseEnded, Data>> {
   { conn in
     let encoder = JSONEncoder()

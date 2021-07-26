@@ -46,6 +46,14 @@ extension Router {
   public static func chaining<A>(_ routers: Router<A>...) -> Router<A> {
     chaining(routers)
   }
+  
+  public func chaining<B>(to router: Router<B>) -> Router<(A, B)> {
+    self <%> router
+  }
+  
+  public func chaining<B>(to router: @escaping () -> Router<B>) -> Router<(A, B)> {
+    chaining(to: router())
+  }
 
   /// Create a router that matches an incoming DELETE request.
   ///
@@ -115,22 +123,6 @@ extension Router {
     Router(casePath, at: path, method: .get, chainingTo: router)
   }
 
-  /// Convenience for creating a router out of an array of routers that do the actual request handling.
-  ///
-  /// - Parameters:
-  ///    - routers: The routers responsible for handling the routing.
-  public static func matching<A>(_ routers: [Router<A>]) -> Router<A> {
-    routers.reduce(.empty, <|>)
-  }
-
-  /// Convenience for creating a router out of an array of routers that do the actual request handling.
-  ///
-  /// - Parameters:
-  ///    - routers: The routers responsible for handling the routing.
-  public static func matching<A>(_ routers: Router<A>...) -> Router<A> {
-    matching(routers)
-  }
-
   /// Create a router that matches an incoming POST request.
   ///
   /// - Parameters:
@@ -158,6 +150,10 @@ extension Router {
   ) -> Router {
     Router(casePath, at: path, method: .post, chainingTo: router)
   }
+  
+  public static var uuid: Router<UUID> {
+    pathParam(.uuid)
+  }
 }
 
 /// A convenience for parsing a path parameter then chaining to a router.
@@ -169,7 +165,7 @@ public func pathParam<A, B>(
   _ parameter: PartialIso<String, A>,
   _ router: Router<B>
 ) -> Router<(A, B)> {
-  pathParam(parameter) <%> router
+  pathParam(parameter).chaining(to: router)
 }
 
 /// A convenience for parsing a path parameter then chaining to a router.

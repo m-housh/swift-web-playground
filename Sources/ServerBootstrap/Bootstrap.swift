@@ -22,6 +22,8 @@ public func bootstrap(
     .flatMap(fireAndForget(.debug(prefix: "Swift-Web Playground Bootstraped!")))
 }
 
+// MARK: - Private
+
 private let stepDivider = EitherIO.debug(prefix: "  -----------------------------")
 
 private func connectToPostgres(
