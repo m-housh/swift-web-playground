@@ -1,6 +1,6 @@
 [![CI](https://github.com/m-housh/swift-web-playground/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/m-housh/swift-web-playground/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/m-housh/swift-web-playground/branch/main/graph/badge.svg?token=GYr6z4hAce)](https://codecov.io/gh/m-housh/swift-web-playground)
-
+[![documentation](https://img.shields.io/badge/open-Documentation-orange)](https://github.com/m-housh/swift-web-playground/wiki)
 # swift-web-playground
 
 Exploring the [pointfreeco/swift-web](https://github.com/pointfreeco/swift-web) framework.
@@ -123,6 +123,10 @@ http :8080/api/favorites/4A52CB80-EA94-11EB-AE9D-E30362C9E57B description="Pizza
 ```
 http DELETE :8080/api/favorites/4A52CB80-EA94-11EB-AE9D-E30362C9E57B
 ```
+
+## Documentation
+
+You can view the api documentation [here](https://github.com/m-housh/swift-web-playground/wiki).
 
 ## The long story.
 My normal profession is as a 3rd generation owner of a small HVAC company.  Since taking over the company
