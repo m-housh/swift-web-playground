@@ -30,7 +30,7 @@ extension Router {
   ) -> Router {
     .case(casePath, chainingTo: router())
   }
-  
+
   /// Convenience for creating a router out of an array of routers that do the actual request handling.
   ///
   /// - Parameters:
@@ -38,7 +38,7 @@ extension Router {
   public static func chaining<A>(_ routers: [Router<A>]) -> Router<A> {
     routers.reduce(.empty, <|>)
   }
-  
+
   /// Convenience for creating a router out of an array of routers that do the actual request handling.
   ///
   /// - Parameters:
