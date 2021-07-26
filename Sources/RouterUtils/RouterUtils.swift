@@ -6,99 +6,182 @@ import Prelude
 
 extension Router {
 
+  /// Useful when embedding a router inside of another one.
+  ///
+  /// - Parameters:
+  ///   - casePath: The case path to match the route on.
+  ///   - next: The router used to parse / create the input to embed in the case path.
   public static func `case`<B>(
     _ casePath: CasePath<A, B>,
-    params: Router<B>
+    _ next: Router<B>
   ) -> Router {
     PartialIso.case(casePath)
-      <¢> params
+      <¢> next
   }
-
+  
+  /// Useful when embedding a router inside of another one.
+  ///
+  /// - Parameters:
+  ///   - casePath: The case path to match the route on.
+  ///   - next: The router used to parse / create the input to embed in the case path.
   public static func `case`<B>(
     _ casePath: CasePath<A, B>,
-    params: @escaping () -> Router<B>
+    _ next: @escaping () -> Router<B>
   ) -> Router {
-    .case(casePath, params: params())
+    .case(casePath, next())
   }
-
+  
+  /// Create a router that matches an incoming DELETE request.
+  ///
+  /// - Parameters:
+  ///   - casePath: The case path to match the route on.
+  ///   - path: Any potential path components to match the route against.
+  ///   - router: The router used to parse / create the input to embed in the case path.
   public static func delete<B>(
     _ casePath: CasePath<A, B>,
     at path: NonEmptyArray<String>? = nil,
-    params: Router<B>
+    chainingTo router: Router<B>
   ) -> Router {
-    .init(casePath, at: path, method: .delete, params: params)
+    Router(casePath, at: path, method: .delete, chainingTo: router)
   }
-
+  
+  /// Create a router that matches an incoming DELETE request.
+  ///
+  /// - Parameters:
+  ///   - casePath: The case path to match the route on.
+  ///   - path: Any potential path components to match the route against.
+  ///   - router: The router used to parse / create the input to embed in the case path.
   public static func delete<B>(
     _ casePath: CasePath<A, B>,
     at path: NonEmptyArray<String>? = nil,
-    params: @escaping () -> Router<B>
+    chainingTo router: @escaping () -> Router<B>
   ) -> Router {
-    .init(casePath, at: path, method: .delete, params: params())
+    Router(casePath, at: path, method: .delete, chainingTo: router())
   }
-
+  
+  /// Create a router that matches an incoming GET request.
+  ///
+  /// - Parameters:
+  ///   - casePath: The case path to match the route on.
+  ///   - path: Any potential path components to match the route against.
   public static func get(
     _ casePath: CasePath<A, Void>,
     at path: NonEmptyArray<String>? = nil
   ) -> Router {
-    .init(casePath, at: path, method: .get)
+    Router(casePath, at: path, method: .get)
   }
 
+  /// Create a router that matches an incoming GET request.
+  ///
+  /// - Parameters:
+  ///   - casePath: The case path to match the route on.
+  ///   - path: Any potential path components to match the route against.
+  ///   - router: The router used to parse / create the input to embed in the case path.
   public static func get<B>(
     _ casePath: CasePath<A, B>,
     at path: NonEmptyArray<String>? = nil,
-    params: @escaping () -> Router<B>
+    chainingTo router: @escaping () -> Router<B>
   ) -> Router {
-    .init(casePath, at: path, method: .get, params: params())
+    Router(casePath, at: path, method: .get, chainingTo: router())
   }
-
+  
+  /// Create a router that matches an incoming GET request.
+  ///
+  /// - Parameters:
+  ///   - casePath: The case path to match the route on.
+  ///   - path: Any potential path components to match the route against.
+  ///   - router: The router used to parse / create the input to embed in the case path.
   public static func get<B>(
     _ casePath: CasePath<A, B>,
     at path: NonEmptyArray<String>? = nil,
-    params: Router<B>
+    chainingTo router: Router<B>
   ) -> Router {
-    .init(casePath, at: path, method: .get, params: params)
+    Router(casePath, at: path, method: .get, chainingTo: router)
   }
-
-  public static func post<B>(
-    _ casePath: CasePath<A, B>,
-    at path: NonEmptyArray<String>? = nil,
-    params: @escaping () -> Router<B>
-  ) -> Router {
-    .init(casePath, at: path, method: .post, params: params())
-  }
-
-  public static func post<B>(
-    _ casePath: CasePath<A, B>,
-    at path: NonEmptyArray<String>? = nil,
-    params: Router<B>
-  ) -> Router {
-    .init(casePath, at: path, method: .post, params: params)
-  }
-
+  
+  /// Convenience for creating a router out of an array of routers that do the actual request handling.
+  ///
+  /// - Parameters:
+  ///    - routers: The routers responsible for handling the routing.
   public static func matching<A>(_ routers: [Router<A>]) -> Router<A> {
     routers.reduce(.empty, <|>)
   }
-
+  
+  /// Convenience for creating a router out of an array of routers that do the actual request handling.
+  ///
+  /// - Parameters:
+  ///    - routers: The routers responsible for handling the routing.
   public static func matching<A>(_ routers: Router<A>...) -> Router<A> {
     matching(routers)
   }
+  
+  /// Create a router that matches an incoming POST request.
+  ///
+  /// - Parameters:
+  ///   - casePath: The case path to match the route on.
+  ///   - path: Any potential path components to match the route against.
+  ///   - router: The router used to parse / create the input to embed in the case path.
+  public static func post<B>(
+    _ casePath: CasePath<A, B>,
+    at path: NonEmptyArray<String>? = nil,
+    chainingTo router: @escaping () -> Router<B>
+  ) -> Router {
+    Router(casePath, at: path, method: .post, chainingTo: router())
+  }
+  
+  /// Create a router that matches an incoming POST request.
+  ///
+  /// - Parameters:
+  ///   - casePath: The case path to match the route on.
+  ///   - path: Any potential path components to match the route against.
+  ///   - router: The router used to parse / create the input to embed in the case path.
+  public static func post<B>(
+    _ casePath: CasePath<A, B>,
+    at path: NonEmptyArray<String>? = nil,
+    chainingTo router: Router<B>
+  ) -> Router {
+    Router(casePath, at: path, method: .post, chainingTo: router)
+  }
+}
+
+/// A convenience for parsing a path parameter then chaining to a router.
+///
+/// - Parameters:
+///   - parameter: The partial isomorphism to parse the path parameter.
+///   - router: The next router in the chain.
+public func pathParam<A, B>(
+  _ parameter: PartialIso<String, A>,
+  _ router: Router<B>
+) -> Router<(A, B)> {
+  pathParam(parameter) <%> router
+}
+
+/// A convenience for parsing a path parameter then chaining to a router.
+///
+/// - Parameters:
+///   - parameter: The partial isomorphism to parse the path parameter.
+///   - router: The next router in the chain.
+public func pathParam<A, B>(
+  _ parameter: PartialIso<String, A>,
+  _ router: @escaping () -> Router<B>
+) -> Router<(A, B)> {
+  pathParam(parameter, router())
 }
 
 // MARK: - Helpers
 extension Router {
 
-  // Router currently does not have any public initializers, so keep this internal.
+  // Router currently does not have any public initializers, so keeping these internal.
   init<B>(
     _ casePath: CasePath<A, B>,
     at path: NonEmptyArray<String>? = nil,
     method: ApplicativeRouter.Method,
-    params: Router<B>
+    chainingTo router: Router<B>
   ) {
     self = PartialIso.case(casePath)
       <¢> ApplicativeRouter.method(method)
       %> parsePath(path)
-      %> params
+      %> router
       <% end
   }
 
@@ -143,6 +226,10 @@ private func parsePath(_ pathComponents: NonEmptyArray<String>) -> Router<Void> 
   return parsePath(pathComponents.first, rest: pathComponents.suffix(from: 1))
 }
 
+/// Sanitize and parse the path components used in routes.
+///
+/// - Parameters:
+///   - pathComponents: The path components to sanitize and parse, if available.
 private func parsePath(_ pathComponents: NonEmptyArray<String>?) -> Router<Void> {
   guard let pathComponents = pathComponents else {
     return .empty

@@ -29,7 +29,7 @@ public func router(
 ) -> Router<ApiRoute> {
 
   // More routes could be added here.
-  let routers: [Router<ApiRoute>] = [
+  .matching(
 
     // Handle the /users routes.
     .case(/ApiRoute.users) {
@@ -47,10 +47,8 @@ public func router(
         decoder: decoder,
         encoder: encoder
       )
-    },
-  ]
-
-  return routers.reduce(.empty, <|>)
+    }
+  )
 }
 
 /// Creates the router that handles all the CRUD routes for the `/users` routes.
@@ -76,8 +74,9 @@ private func makeUserRouter(
       jsonBody(ApiRoute.UsersRoute.InsertRequest.self, encoder: encoder, decoder: decoder)
     },
     .post(/ApiRoute.UsersRoute.update, at: path) {
-      pathParam(.uuid)
-        <%> jsonBody(ApiRoute.UsersRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
+      pathParam(.uuid) {
+        jsonBody(ApiRoute.UsersRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
+      }
     }
   )
 }
@@ -107,8 +106,9 @@ private func makeFavoriteRouter(
       jsonBody(ApiRoute.FavoritesRoute.InsertRequest.self, encoder: encoder, decoder: decoder)
     },
     .post(/ApiRoute.FavoritesRoute.update, at: path) {
-      pathParam(.uuid)
-        <%> jsonBody(ApiRoute.FavoritesRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
+      pathParam(.uuid) {
+        jsonBody(ApiRoute.FavoritesRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
+      }
     }
   )
 }
