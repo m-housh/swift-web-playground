@@ -27,7 +27,7 @@ public func router(
   decoder: JSONDecoder,
   encoder: JSONEncoder
 ) -> Router<ApiRoute> {
-  
+
   let usersPath = pathPrefix.appending("users")
   let favoritesPath = pathPrefix.appending("favorites")
 

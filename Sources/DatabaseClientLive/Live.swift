@@ -71,7 +71,7 @@ enum Table: CustomStringConvertible, SQLExpression {
 
   /// The users table.
   case users
-  
+
   /// The user favorites table.
   case favorites
 

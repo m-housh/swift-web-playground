@@ -46,11 +46,11 @@ extension Router {
   public static func chaining<A>(_ routers: Router<A>...) -> Router<A> {
     chaining(routers)
   }
-  
+
   public func chaining<B>(to router: Router<B>) -> Router<(A, B)> {
     self <%> router
   }
-  
+
   public func chaining<B>(to router: @escaping () -> Router<B>) -> Router<(A, B)> {
     chaining(to: router())
   }
@@ -150,7 +150,7 @@ extension Router {
   ) -> Router {
     Router(casePath, at: path, method: .post, chainingTo: router)
   }
-  
+
   public static var uuid: Router<UUID> {
     pathParam(.uuid)
   }
@@ -184,7 +184,7 @@ public func pathParam<A, B>(
 extension Router {
 
   // Router currently does not have any public initializers, so keeping these internal.
-  
+
   /// Create a router that matches on the given path parameters and chains to another router to parse
   /// additional parameters.
   ///
@@ -205,7 +205,7 @@ extension Router {
       %> router
       <% end
   }
-  
+
   /// Create a router that matches on the given path parameters and  does not require any additional parameters
   /// to be matched against.
   ///
