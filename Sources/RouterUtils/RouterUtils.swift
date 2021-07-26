@@ -188,6 +188,15 @@ public func pathParam<A, B>(
 extension Router {
 
   // Router currently does not have any public initializers, so keeping these internal.
+  
+  /// Create a router that matches on the given path parameters and chains to another router to parse
+  /// additional parameters.
+  ///
+  /// - Parameters:
+  ///   - casePath: The case path to match the route on.
+  ///   - path: Any potential path components to match the route against.
+  ///   - method: The method to match against.
+  ///   - router: The router used to parse / create the input to embed in the case path.
   init<B>(
     _ casePath: CasePath<A, B>,
     at path: NonEmptyArray<String>? = nil,
@@ -200,7 +209,14 @@ extension Router {
       %> router
       <% end
   }
-
+  
+  /// Create a router that matches on the given path parameters and  does not require any additional parameters
+  /// to be matched against.
+  ///
+  /// - Parameters:
+  ///   - casePath: The case path to match the route on.
+  ///   - path: Any potential path components to match the route against.
+  ///   - method: The method to match against.
   init(
     _ casePath: CasePath<A, Void>,
     at path: NonEmptyArray<String>? = nil,
