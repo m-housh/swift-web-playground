@@ -9,8 +9,9 @@ enum TestRoute: Equatable {
   case delete(id: Int)
   case fetchAll
   case fetchWithParam(RouteWithParam)
-  case fetchWithCodableParam(RouteWithCodableParam)
+  case head
   case insert(InsertRequest)
+  case options
   case update(id: Int, update: UpdateRequest)
   
   struct InsertRequest: Codable, Equatable {
@@ -26,48 +27,25 @@ enum RouteWithParam: Equatable {
   case fetch(foo: String?)
 }
 
-enum RouteWithCodableParam: Equatable {
+enum NestedRoute: Equatable {
+  case deep1(Deep1)
   
-  case fetch(CodableParam)
-  
-  struct CodableParam: Codable, Equatable {
-    var userId: Int
-    var ref: String
+  enum Deep1: Equatable {
+    
+    case deep2 (Deep2)
+    
+    enum Deep2: Equatable {
+      case fetch
+    }
   }
 }
 
 class RouterUtilsTestCase: XCTestCase {
   
   var router: Router<TestRoute>!
+  var nestedRouter: Router<NestedRoute>!
   
   override func setUp() {
     super.setUp()
-    
-    let path: NonEmptyArray<String> = .init("/test")
-    
-    self.router = .chaining(
-      .delete(/TestRoute.delete(id:), at: path) {
-        pathParam(.int)
-      },
-      .get(/TestRoute.fetchAll, at: path),
-      .post(/TestRoute.insert, at: path) {
-        jsonBody(TestRoute.InsertRequest.self)
-      },
-      .post(/TestRoute.update(id:update:), at: path) {
-        pathParam(.int) <%> jsonBody(TestRoute.UpdateRequest.self)
-      },
-      .get(/TestRoute.fetchWithParam, at: .init("test", "param")) {
-        .case(/RouteWithParam.fetch(foo:)) {
-          queryParam("foo", opt(.string))
-        }
-      }
-      //
-      
-      //      .case(/TestRoute.fetchWithCodableParam)
-      //        <¢> .fetch(/RouteWithCodableParam.fetch, path: .init("test", "codable"))
-      
-    )
-    
   }
-  
 }
