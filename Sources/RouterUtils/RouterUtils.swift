@@ -145,7 +145,7 @@ extension Router {
   public func `case`<B>(_ casePath: CasePath<B, A>) -> Router<B> {
     self.map(.case(casePath))
   }
-  
+
   public static func `case`<B>(_ casePath: CasePath<A, B>, chainingTo router: Router<B>) -> Router {
     PartialIso.case(casePath) <¢> router
   }

@@ -29,41 +29,44 @@ public func router(
 ) -> Router<ApiRoute> {
 
   let usersPath = pathPrefix.appending("users")
-  
+
   // Have to specifiy the type before calling the method for it to work on Linux,
   // in swift 5.3 at least.  It works without on macOS, which is a cleaner looking syntax.
-  
+
   let usersRouter: Router<ApiRoute.UsersRoute> = .routes(
     Router<ApiRoute.UsersRoute>.delete().path(usersPath)
       .pathParam(.uuid)
       .case(/ApiRoute.UsersRoute.delete(id:))
       .end(),
-    
+
     Router<ApiRoute.UsersRoute>.get().path(usersPath)
       .case(/ApiRoute.UsersRoute.fetch)
       .end(),
-      
+
     Router<ApiRoute.UsersRoute>.get().path(usersPath)
       .pathParam(.uuid)
       .case(/ApiRoute.UsersRoute.fetchId(id:))
       .end(),
-    
+
     Router<ApiRoute.UsersRoute>.post().path(usersPath)
       .jsonBody(ApiRoute.UsersRoute.InsertRequest.self, encoder: encoder, decoder: decoder)
       .case(/ApiRoute.UsersRoute.insert)
       .end(),
-    
+
     Router<ApiRoute.UsersRoute>.post().path(usersPath)
-      .tuple(pathParam(.uuid), jsonBody(ApiRoute.UsersRoute.UpdateRequest.self, encoder: encoder, decoder: decoder))
+      .tuple(
+        pathParam(.uuid),
+        jsonBody(ApiRoute.UsersRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
+      )
       .case(/ApiRoute.UsersRoute.update(id:update:))
       .end()
   )
-  
+
   let favoritesPath = pathPrefix.appending("favorites")
-  
+
   // Have to specifiy the type before calling the method for it to work on Linux,
   // in swift 5.3 at least.  It works without on macOS, which is a cleaner looking syntax.
-  
+
   let favoritesRouter: Router<ApiRoute.FavoritesRoute> = .routes(
     Router<ApiRoute.FavoritesRoute>.delete().path(favoritesPath)
       .pathParam(.uuid)
@@ -82,7 +85,10 @@ public func router(
       .case(/ApiRoute.FavoritesRoute.insert)
       .end(),
     Router<ApiRoute.FavoritesRoute>.post().path(favoritesPath)
-      .tuple(pathParam(.uuid), jsonBody(ApiRoute.FavoritesRoute.UpdateRequest.self, encoder: encoder, decoder: decoder))
+      .tuple(
+        pathParam(.uuid),
+        jsonBody(ApiRoute.FavoritesRoute.UpdateRequest.self, encoder: encoder, decoder: decoder)
+      )
       .case(/ApiRoute.FavoritesRoute.update(id:update:))
       .end()
   )

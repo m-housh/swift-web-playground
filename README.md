@@ -183,6 +183,8 @@ or moved to it's own package.  This library integrates the [pointfreeco/swift-ca
 the `Route` type that it matches on. As well as the [pointfreeco/swift-nonempty](https://github.com/pointfreeco/swift-nonempty) to ensure that path components are specified
 when creating routers.
 
+This can now be used as a stand-alone package [swift-web-utils](https://github.com/m-housh/swift-web-utils).
+
 ### ServerRouter
 
 This is repsponsible for creating the actual router used by the application, using the [CrudRouter](#CrudRouter) 
