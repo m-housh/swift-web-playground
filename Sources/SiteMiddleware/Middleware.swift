@@ -1,6 +1,7 @@
 import ApplicativeRouterHttpPipelineSupport
 import DatabaseClient
 import Either
+import EnvVars
 import Foundation
 import HttpPipeline
 import Logging
@@ -52,7 +53,7 @@ private func apiMiddleware(
         .favorites
         .fetch(userId)
         .run
-        .flatMap(respond(on: conn))
+        .flatMap(respond(on: conn, with: environment.envVars))
 
     case .users(.fetch):
       logger?.debug("fetching users")
@@ -60,7 +61,7 @@ private func apiMiddleware(
         .users
         .fetch()
         .run
-        .flatMap(respond(on: conn))
+        .flatMap(respond(on: conn, with: environment.envVars))
 
     case let .favorites(.fetchId(id: id)):
       logger?.debug("fetching favorites.id: \(id)")
@@ -68,7 +69,7 @@ private func apiMiddleware(
         .favorites
         .fetchId(id)
         .run
-        .flatMap(respond(on: conn))
+        .flatMap(respond(on: conn, with: environment.envVars))
 
     case let .users(.fetchId(id: id)):
       logger?.debug("fetching user.id: \(id)")
@@ -76,7 +77,7 @@ private func apiMiddleware(
         .users
         .fetchId(id)
         .run
-        .flatMap(respond(on: conn))
+        .flatMap(respond(on: conn, with: environment.envVars))
 
     case let .favorites(.insert(request)):
       logger?.debug("inserting favorites: \(request)")
@@ -84,7 +85,7 @@ private func apiMiddleware(
         .favorites
         .insert(.init(userId: request.userId, description: request.description))
         .run
-        .flatMap(respond(on: conn))
+        .flatMap(respond(on: conn, with: environment.envVars))
 
     case let .users(.insert(request)):
       logger?.debug("inserting user: \(request)")
@@ -92,7 +93,7 @@ private func apiMiddleware(
         .users
         .insert(.init(name: request.name))
         .run
-        .flatMap(respond(on: conn))
+        .flatMap(respond(on: conn, with: environment.envVars))
 
     case let .favorites(.update(id: id, update: update)):
       logger?.debug("updating favorite.id: \(id)")
@@ -101,7 +102,7 @@ private func apiMiddleware(
         .favorites
         .update(.init(id: id, description: update.description))
         .run
-        .flatMap(respond(on: conn))
+        .flatMap(respond(on: conn, with: environment.envVars))
 
     case let .users(.update(id: id, update: update)):
       logger?.debug("updating user.id: \(id)")
@@ -110,7 +111,7 @@ private func apiMiddleware(
         .users
         .update(.init(id: id, name: update.name))
         .run
-        .flatMap(respond(on: conn))
+        .flatMap(respond(on: conn, with: environment.envVars))
 
     case let .favorites(.delete(id: id)):
       logger?.debug("deleting favorite.id: \(id)")
@@ -118,7 +119,7 @@ private func apiMiddleware(
         .favorites
         .delete(id)
         .run
-        .flatMap(respond(on: conn))
+        .flatMap(respond(on: conn, with: environment.envVars))
 
     case let .users(.delete(id: id)):
       logger?.debug("deleting user.id: \(id)")
@@ -126,7 +127,7 @@ private func apiMiddleware(
         .users
         .delete(id)
         .run
-        .flatMap(respond(on: conn))
+        .flatMap(respond(on: conn, with: environment.envVars))
     }
   }
 }
@@ -136,7 +137,8 @@ private func apiMiddleware(
 /// - Parameters:
 ///   - conn: The incoming connection used to respond.
 private func respond<A>(
-  on conn: Conn<StatusLineOpen, ApiRoute>
+  on conn: Conn<StatusLineOpen, ApiRoute>,
+  with envVars: EnvVars
 ) -> (Either<Error, A>) -> IO<Conn<ResponseEnded, Data>>
 where A: Encodable {
   { (eitherErrorOrOther: Either<Error, A>) -> IO<Conn<ResponseEnded, Data>> in
@@ -144,12 +146,12 @@ where A: Encodable {
     case let .left(error):
       return conn.map(const(ApiError(error: error)))
         |> writeStatus(.internalServerError)
-        >=> respondJson()
+        >=> respondJson(envVars: envVars)
 
     case let .right(value):
       return conn.map(const(value))
         |> writeStatus(.ok)
-        >=> respondJson()
+        >=> respondJson(envVars: envVars)
     }
   }
 }
@@ -159,19 +161,20 @@ where A: Encodable {
 /// - Parameters:
 ///   - conn: The incoming connection used to respond.
 private func respond(
-  on conn: Conn<StatusLineOpen, ApiRoute>
+  on conn: Conn<StatusLineOpen, ApiRoute>,
+  with envVars: EnvVars
 ) -> (Either<Error, Void>) -> IO<Conn<ResponseEnded, Data>> {
   { (eitherErrorOrOther: Either<Error, Void>) -> IO<Conn<ResponseEnded, Data>> in
     switch eitherErrorOrOther {
     case let .left(error):
       return conn.map(const(ApiError(error: error)))
         |> writeStatus(.internalServerError)
-        >=> respondJson()
+        >=> respondJson(envVars: envVars)
 
     case .right:
       return conn.map(const(""))
         |> writeStatus(.ok)
-        >=> respondJson()
+        >=> respondJson(envVars: envVars)
     }
   }
 }

@@ -33,7 +33,7 @@ class SiteMiddlewareTests: XCTestCase {
     GET /api/users
     
     200 OK
-    Content-Length: 61
+    Content-Length: 82
     Content-Type: application/json
     Referrer-Policy: strict-origin-when-cross-origin
     X-Content-Type-Options: nosniff
@@ -42,7 +42,12 @@ class SiteMiddlewareTests: XCTestCase {
     X-Permitted-Cross-Domain-Policies: none
     X-XSS-Protection: 1; mode=block
 
-    [{"id":"DEADBEEF-DEAD-BEEF-DEAD-BEEFDEADBEEF","name":"blob"}]
+    [
+      {
+        "id" : "DEADBEEF-DEAD-BEEF-DEAD-BEEFDEADBEEF",
+        "name" : "blob"
+      }
+    ]
     """#)
   }
   
