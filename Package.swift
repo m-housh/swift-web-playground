@@ -31,7 +31,9 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-nonempty.git", from: "0.3.1"),
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay.git", from: "0.1.0"),
-    .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.9.0"),
+    .package(
+      name: "SnapshotTesting", url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .exact("1.8.2")
+    ),
   ],
   targets: [
     .target(
@@ -140,7 +142,7 @@ let package = Package(
       dependencies: [
         "SiteMiddleware",
         .product(name: "HttpPipelineTestSupport", package: "Web"),
-        .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
+        .product(name: "SnapshotTesting", package: "SnapshotTesting")
       ])
   ]
 )
