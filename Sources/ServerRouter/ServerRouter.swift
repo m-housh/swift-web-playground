@@ -121,12 +121,12 @@ extension Optional where Wrapped == NonEmptyArray<String> {
 
 #if DEBUG
 
-extension Router where A == ApiRoute {
-  
-  public static let testing = router(
-    pathPrefix: .init("api"),
-    decoder: .init(),
-    encoder: .init()
-  )
-}
+  extension Router where A == ApiRoute {
+
+    public static let testing = router(
+      pathPrefix: .init("api"),
+      decoder: .init(),
+      encoder: .init()
+    )
+  }
 #endif

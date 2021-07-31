@@ -35,13 +35,13 @@ public struct ServerEnvironment {
 }
 
 #if DEBUG
-extension ServerEnvironment {
-  
-  public static let failing = ServerEnvironment(
-    database: .failing,
-    envVars: .init(appEnv: .testing),
-    router: .testing
-  )
-}
+  extension ServerEnvironment {
+
+    public static let failing = ServerEnvironment(
+      database: .failing,
+      envVars: .init(appEnv: .testing),
+      router: .testing
+    )
+  }
 
 #endif

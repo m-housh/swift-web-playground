@@ -32,7 +32,8 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-nonempty.git", from: "0.3.1"),
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay.git", from: "0.1.0"),
     .package(
-      name: "SnapshotTesting", url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .exact("1.8.2")
+      name: "SnapshotTesting", url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
+      .exact("1.8.2")
     ),
   ],
   targets: [
@@ -119,7 +120,7 @@ let package = Package(
       name: "ServerTestHelpers",
       dependencies: [
         .product(name: "Either", package: "Prelude"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay")
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]),
     .target(
       name: "SharedModels",
@@ -142,7 +143,7 @@ let package = Package(
       dependencies: [
         "SiteMiddleware",
         .product(name: "HttpPipelineTestSupport", package: "Web"),
-        .product(name: "SnapshotTesting", package: "SnapshotTesting")
-      ])
+        .product(name: "SnapshotTesting", package: "SnapshotTesting"),
+      ]),
   ]
 )
