@@ -28,3 +28,48 @@ public struct UserFavorite: Codable, Equatable, Identifiable {
     self.description = description
   }
 }
+
+#if DEBUG
+extension UserFavorite {
+  
+  public static func pizza(userId: User.ID) -> UserFavorite {
+    UserFavorite(
+      id: UUID(uuidString: "DEADBEEF-0001-BEEF-DEAD-BEEFDEADBEEF")!,
+      userId: userId,
+      description: "pizza"
+    )
+  }
+  
+  public static func tacos(userId: User.ID) -> UserFavorite {
+    UserFavorite(
+      id: UUID(uuidString: "DEADBEEF-0002-BEEF-DEAD-BEEFDEADBEEF")!,
+      userId: userId,
+      description: "tacos"
+    )
+  }
+  
+  public static func coffee(userId: User.ID) -> UserFavorite {
+    UserFavorite(
+      id: UUID(uuidString: "DEADBEEF-0003-BEEF-DEAD-BEEFDEADBEEF")!,
+      userId: userId,
+      description: "coffee"
+    )
+  }
+}
+
+extension Array where Element == UserFavorite {
+  
+  public static let blobsFavorites: Self = [
+    .pizza(userId: User.blob.id),
+    .coffee(userId: User.blob.id)
+  ]
+  
+  public static let blobJrsFavorites: Self = [
+    .tacos(userId: User.blobJr.id),
+  ]
+  
+  public static let blobSrsFavorites: Self = [
+    .coffee(userId: User.blobJr.id),
+  ]
+}
+#endif

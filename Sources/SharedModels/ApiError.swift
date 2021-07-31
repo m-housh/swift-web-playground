@@ -39,3 +39,28 @@ public struct ApiError: Codable, Error, Equatable, LocalizedError {
     self.message
   }
 }
+
+#if DEBUG
+extension ApiError {
+  
+  init(
+    errorDump: String,
+    message: String,
+    file: StaticString = #fileID,
+    line: UInt = #line
+  ) {
+    self.errorDump = errorDump
+    self.message = message
+    self.file = String(describing: file)
+    self.line = line
+  }
+  
+  public static func testing(
+    file: StaticString = #fileID,
+    line: UInt = #line
+  ) -> Self {
+    self.init(errorDump: "Testing error.", message: "This is an error for testing", file: file, line: line)
+  }
+}
+
+#endif

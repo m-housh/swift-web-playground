@@ -52,3 +52,9 @@ public struct EnvVars: Codable, Equatable {
     case testing
   }
 }
+
+#if DEBUG
+extension EnvVars {
+  public static let testing = EnvVars(appEnv: .testing)
+}
+#endif

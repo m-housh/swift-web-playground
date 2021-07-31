@@ -39,7 +39,7 @@ public struct ServerEnvironment {
 
     public static let failing = ServerEnvironment(
       database: .failing,
-      envVars: .init(appEnv: .testing),
+      envVars: .testing,
       router: .testing
     )
   }

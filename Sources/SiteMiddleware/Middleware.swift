@@ -144,7 +144,7 @@ where A: Encodable {
   { (eitherErrorOrOther: Either<Error, A>) -> IO<Conn<ResponseEnded, Data>> in
     switch eitherErrorOrOther {
     case let .left(error):
-      return conn.map(const(ApiError(error: error)))
+      return conn.map(const(envVars.appEnv == .testing ? ApiError.testing() : ApiError(error: error)))
         |> writeStatus(.internalServerError)
         >=> respondJson(envVars: envVars)
 
@@ -167,7 +167,9 @@ private func respond(
   { (eitherErrorOrOther: Either<Error, Void>) -> IO<Conn<ResponseEnded, Data>> in
     switch eitherErrorOrOther {
     case let .left(error):
-      return conn.map(const(ApiError(error: error)))
+      return conn.map(
+        const(envVars.appEnv == .testing ? ApiError.testing() : ApiError(error: error))
+        )
         |> writeStatus(.internalServerError)
         >=> respondJson(envVars: envVars)
 

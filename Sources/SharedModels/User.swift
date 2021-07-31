@@ -19,3 +19,25 @@ public struct User: Codable, Identifiable, Equatable {
     self.name = name
   }
 }
+
+#if DEBUG
+
+extension User {
+  
+  public static let blob = User(
+    id: UUID(uuidString: "DEADBEEF-0001-BEEF-DEAD-BEEFDEADBEEF")!,
+    name: "blob"
+  )
+  
+  public static let blobJr = User(
+    id: UUID(uuidString: "DEADBEEF-0002-BEEF-DEAD-BEEFDEADBEEF")!,
+    name: "blob-jr"
+  )
+  
+  public static let blobSr = User(
+    id: UUID(uuidString: "DEADBEEF-0003-BEEF-DEAD-BEEFDEADBEEF")!,
+    name: "blob-sr"
+  )
+}
+
+#endif
