@@ -121,21 +121,19 @@ extension Optional where Wrapped == NonEmptyArray<String> {
 
 #if DEBUG
 
-extension Router where A == ApiRoute {
+  extension Router where A == ApiRoute {
 
-  public static let testing = router(
-    pathPrefix: .init("api"),
-    decoder: .init(),
-    encoder: encoder
-  )
-}
+    public static let testing = router(
+      pathPrefix: .init("api"),
+      decoder: .init(),
+      encoder: encoder
+    )
+  }
 
-private let encoder: JSONEncoder = {
-  let encoder = JSONEncoder()
-  encoder.outputFormatting = [.sortedKeys, .prettyPrinted]
-  return encoder
-}()
+  private let encoder: JSONEncoder = {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.sortedKeys, .prettyPrinted]
+    return encoder
+  }()
 
 #endif
-
-

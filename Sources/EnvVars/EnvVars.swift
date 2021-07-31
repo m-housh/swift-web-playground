@@ -54,7 +54,7 @@ public struct EnvVars: Codable, Equatable {
 }
 
 #if DEBUG
-extension EnvVars {
-  public static let testing = EnvVars(appEnv: .testing)
-}
+  extension EnvVars {
+    public static let testing = EnvVars(appEnv: .testing)
+  }
 #endif
