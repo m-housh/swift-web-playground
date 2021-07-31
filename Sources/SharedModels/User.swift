@@ -14,7 +14,7 @@ public struct User: Codable, Identifiable, Equatable {
   /// - Parameters:
   ///   - id: The unique identifier of the user.
   ///   - name: The user's name.
-  init(id: UUID, name: String) {
+  public init(id: UUID, name: String) {
     self.id = id
     self.name = name
   }

@@ -118,3 +118,15 @@ extension Optional where Wrapped == NonEmptyArray<String> {
     return strong.appending(element)
   }
 }
+
+#if DEBUG
+
+extension Router where A == ApiRoute {
+  
+  public static let testing = router(
+    pathPrefix: .init("api"),
+    decoder: .init(),
+    encoder: .init()
+  )
+}
+#endif

@@ -4,6 +4,7 @@ import SharedModels
 
 #if canImport(FoundationNetworking)
   import FoundationNetworking
+import XCTest
 #endif
 
 /// Represents all the database interactions for the application.
@@ -208,3 +209,48 @@ extension DatabaseClient {
     }
   }
 }
+
+#if DEBUG
+import ServerTestHelpers
+import XCTestDynamicOverlay
+
+extension DatabaseClient {
+
+  public static let failing = DatabaseClient(
+    users: .init(
+      delete: {_ in
+        .failing("\(Self.self).delete is unimplemented.")
+      },
+      fetch: {
+        .failing("\(Self.self).fetch is unimplemented.")
+      },
+      fetchId: { _ in
+        .failing("\(Self.self).fetchId is unimplemented.")
+      },
+      insert: { _ in
+        .failing("\(Self.self).insert is unimplemented.")
+      },
+      update: { _ in
+        .failing("\(Self.self).update is unimplemented.")
+      }),
+    favorites: .init(
+      delete: {_ in
+        .failing("\(Self.self).delete is unimplemented.")
+      },
+      fetch: { _ in
+        .failing("\(Self.self).fetch is unimplemented.")
+      },
+      fetchId: { _ in
+        .failing("\(Self.self).fetchId is unimplemented.")
+      },
+      insert: { _ in
+        .failing("\(Self.self).insert is unimplemented.")
+      },
+      update: { _ in
+        .failing("\(Self.self).update is unimplemented.")
+      }),
+    migrate: { .failing("\(Self.self).migrate is unimplemented.") },
+    shutdown: { .failing("\(Self.self).shutdown is unimplemented.") })
+}
+
+#endif

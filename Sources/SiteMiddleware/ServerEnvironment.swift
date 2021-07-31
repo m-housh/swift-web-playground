@@ -33,3 +33,15 @@ public struct ServerEnvironment {
     self.router = router
   }
 }
+
+#if DEBUG
+extension ServerEnvironment {
+  
+  public static let failing = ServerEnvironment(
+    database: .failing,
+    envVars: .init(appEnv: .testing),
+    router: .testing
+  )
+}
+
+#endif

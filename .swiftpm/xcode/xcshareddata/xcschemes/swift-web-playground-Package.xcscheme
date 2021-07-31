@@ -216,6 +216,20 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ServerTestHelpers"
+               BuildableName = "ServerTestHelpers"
+               BlueprintName = "ServerTestHelpers"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -327,6 +341,16 @@
                BlueprintIdentifier = "RouterUtilsTests"
                BuildableName = "RouterUtilsTests"
                BlueprintName = "RouterUtilsTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SiteMiddlewareTests"
+               BuildableName = "SiteMiddlewareTests"
+               BlueprintName = "SiteMiddlewareTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
